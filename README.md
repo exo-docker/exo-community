@@ -2,14 +2,14 @@
 
 * Ubuntu 14.04
 * Oracle JDK 7 update 60
-* eXo Platform 4.1-M2 Community edition
+* eXo Platform 4.1-RC1 Community edition
 
 ## How to
 
 * run the container
 
 
-    docker run -d -p 8080:8080 -name="exo" exoplatform/ubuntu-jdk7-exo:plf-4.1-m2
+    docker run -d -p 8080:8080 -name="exo" exoplatform/ubuntu-jdk7-exo:plf-4.1-rc1
 
 * watch container logs
 
