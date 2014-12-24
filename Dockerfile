@@ -3,17 +3,17 @@
 # - Libre Office
 # - eXo Platform Community
 
-# Build:    docker build -t exoplatform/ubuntu-jdk7-exo:plf-4.1-rc1 .
+# Build:    docker build -t exoplatform/ubuntu-jdk7-exo:plf-4.1.0 .
 #
-# Run:      docker run -t -i -name="exo" exoplatform/ubuntu-jdk7-exo:plf-4.1-rc1
-#           docker run -d -name="exo" exoplatform/ubuntu-jdk7-exo:plf-4.1-rc1
-#           docker run -d -name="exo" -p 8080:8080 exoplatform/ubuntu-jdk7-exo:plf-4.1-rc1
+# Run:      docker run -t -i --name=exo exoplatform/ubuntu-jdk7-exo:plf-4.1.0
+#           docker run -d --name=exo exoplatform/ubuntu-jdk7-exo:plf-4.1.0
+#           docker run -d --name=exo -p 8080:8080 exoplatform/ubuntu-jdk7-exo:plf-4.1.0
 
-FROM       exoplatform/ubuntu-jdk7:7u60
+FROM       exoplatform/ubuntu-jdk7:7u71
 MAINTAINER DROUET Frederic <fdrouet+docker@exoplatform.com>
 
 # Environment variables
-ENV EXO_VERSION 4.1.0-RC1
+ENV EXO_VERSION 4.1.0
 ENV EXO_EDITION community
 
 ENV EXO_APP_DIR   /opt/exo
