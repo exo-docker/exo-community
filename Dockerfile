@@ -26,6 +26,8 @@ ENV EXO_GROUP ${EXO_USER}
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN useradd --create-home --user-group --shell /bin/bash ${EXO_USER}
+# giving all rights to eXo user
+RUN echo "exo   ALL = NOPASSWD: ALL" > /etc/sudoers.d/exo && chmod 440 /etc/sudoers.d/exo
 
 # Install some useful or needed tools
 RUN apt-get -qq update && \
