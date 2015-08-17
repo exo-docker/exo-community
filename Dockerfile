@@ -3,17 +3,17 @@
 # - Libre Office
 # - eXo Platform Community
 
-# Build:    docker build -t exoplatform/ubuntu-jdk7-exo:plf-4.1.0 .
+# Build:    docker build -t exoplatform/ubuntu-jdk7-exo:plf-4.2.0 .
 #
-# Run:      docker run -t -i --name=exo exoplatform/ubuntu-jdk7-exo:plf-4.1.0
-#           docker run -d --name=exo exoplatform/ubuntu-jdk7-exo:plf-4.1.0
-#           docker run -d --name=exo -p 8080:8080 exoplatform/ubuntu-jdk7-exo:plf-4.1.0
+# Run:      docker run -t -i --name=exo exoplatform/ubuntu-jdk7-exo:plf-4.2.0
+#           docker run -d --name=exo exoplatform/ubuntu-jdk7-exo:plf-4.2.0
+#           docker run -d --name=exo -p 8080:8080 exoplatform/ubuntu-jdk7-exo:plf-4.2.0
 
 FROM       exoplatform/ubuntu-jdk7:7u71
 MAINTAINER DROUET Frederic <fdrouet+docker@exoplatform.com>
 
 # Environment variables
-ENV EXO_VERSION 4.1.0
+ENV EXO_VERSION 4.2.0
 ENV EXO_EDITION community
 
 ENV EXO_APP_DIR   /opt/exo
@@ -43,13 +43,13 @@ RUN mkdir -p ${EXO_TMP_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_TMP_DIR}
 RUN mkdir -p ${EXO_LOG_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
 
 # Install eXo Platform
-RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip http://sourceforge.net/projects/exo/files/Platform4.1/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip/download && \
-    unzip -q /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip -d ${EXO_APP_DIR} && \
-    rm -f /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip && \
+RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-tomcat-${EXO_VERSION}.zip http://sourceforge.net/projects/exo/files/Platform4.2/eXo-Platform-${EXO_EDITION}-tomcat-${EXO_VERSION}.zip/download && \
+    unzip -q /srv/downloads/eXo-Platform-${EXO_EDITION}-tomcat-${EXO_VERSION}.zip -d ${EXO_APP_DIR} && \
+    rm -f /srv/downloads/eXo-Platform-${EXO_EDITION}-tomcat-${EXO_VERSION}.zip && \
     ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR}/current
 RUN rm -rf ${EXO_APP_DIR}/current/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/current/logs
 RUN chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR}/current/
 EXPOSE 8080
 # FIXME : replace "exo" by ${EXO_USER} when https://github.com/docker/docker/issues/4909 will be fixed.
-USER exo
+USER ${EXO_USER}
 CMD ${EXO_APP_DIR}/current/start_eXo.sh --data ${EXO_DATA_DIR}
