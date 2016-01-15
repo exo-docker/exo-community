@@ -9,7 +9,7 @@
 #           docker run -d --name=exo exoplatform/exo-community:4.2
 #           docker run -d --name=exo -p 8080:8080 exoplatform/exo-community:4.2
 
-FROM       exoplatform/base-jdk:7u79
+FROM       exoplatform/base-jdk:1.7
 MAINTAINER DROUET Frederic <fdrouet+docker@exoplatform.com>
 
 # Environment variables
