@@ -35,7 +35,8 @@ RUN apt-get -qq update && \
   apt-get -qq -y upgrade && \
   apt-get -qq -y install libreoffice-calc libreoffice-draw libreoffice-impress libreoffice-math libreoffice-writer && \
   apt-get -qq -y autoremove && \
-  apt-get -qq -y autoclean
+  apt-get -qq -y autoclean && \
+  rm -rf /var/lib/apt/lists/*
 
 # Create needed directories
 RUN mkdir -p ${EXO_APP_DIR}
@@ -47,9 +48,10 @@ RUN mkdir -p ${EXO_LOG_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
 RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip ${EXO_DOWNLOAD} && \
     unzip -q /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip -d ${EXO_APP_DIR} && \
     rm -f /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip && \
-    ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR}/current
+    ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR}/current && \
+    chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR}/current/
 RUN rm -rf ${EXO_APP_DIR}/current/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/current/logs
-RUN chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR}/current/
+
 EXPOSE 8080
 USER ${EXO_USER}
 CMD ${EXO_APP_DIR}/current/start_eXo.sh --data ${EXO_DATA_DIR}
