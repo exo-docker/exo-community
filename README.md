@@ -1,17 +1,36 @@
-# Ubuntu + Oracle jdk 7 + eXo Platform Community Docker container
+# eXo Platform Community Docker container
 
-* Ubuntu 14.04
-* Oracle JDK 7 update 71
-* eXo Platform 4.2.0 Community edition
+* Ubuntu
+* Oracle JDK
+* eXo Platform Community edition
+* LibreOffice
 
 ## How to
 
 * run the container
 
-
-    docker run -d -p 8080:8080 --name=exo exoplatform/ubuntu-jdk7-exo:plf-4.2.0
+```
+docker run -d -p 8080:8080 --name=exo exoplatform/exo-community:latest
+```
 
 * watch container logs
 
+```
+docker logs --follow exo
+```
 
-    docker logs --follow exo
+## List of available versions
+
+* exoplatform/exo-community:4.3
+   * Oracle JDK 8
+   * eXo Platform 4.3.0 Community edition
+
+
+* exoplatform/exo-community:4.2
+  * Oracle JDK 7
+  * eXo Platform 4.2.0 Community edition
+
+
+* exoplatform/exo-community:4.1
+  * Oracle JDK 7
+  * eXo Platform 4.1.0 Community edition
