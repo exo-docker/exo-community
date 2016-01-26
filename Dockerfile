@@ -50,6 +50,19 @@ RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-tomcat-${EXO_VERSION}.
     rm -f /srv/downloads/eXo-Platform-${EXO_EDITION}-tomcat-${EXO_VERSION}.zip && \
     ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR}/current && \
     chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR}/current/
+
+# Install Docker customization file
+ADD setenv-docker-customize.sh ${EXO_APP_DIR}/current/bin/setenv-docker-customize.sh
+RUN chmod 755 ${EXO_APP_DIR}/current/bin/setenv-docker-customize.sh & chown exo:exo ${EXO_APP_DIR}/current/bin/setenv-docker-customize.sh
+RUN sed -i '/# Load custom settings/i \
+\# Load custom settings for docker environment\n\
+[ -r "$CATALINA_BASE/bin/setenv-docker-customize.sh" ] \
+&& . "$CATALINA_BASE/bin/setenv-docker-customize.sh" \
+|| echo "No Docker eXo Platform customization file : $CATALINA_BASE/bin/setenv-docker-customize.sh"\n\
+' ${EXO_APP_DIR}/current/bin/setenv.sh && \
+  grep 'setenv-docker-customize.sh' ${EXO_APP_DIR}/current/bin/setenv.sh
+
+
 RUN rm -rf ${EXO_APP_DIR}/current/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/current/logs
 
 EXPOSE 8080
