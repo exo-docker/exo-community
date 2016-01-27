@@ -19,6 +19,29 @@ docker run -d -p 8080:8080 --name=exo exoplatform/exo-community:latest
 docker logs --follow exo
 ```
 
+* install eXo Platform add-ons
+
+_(starting from 4.3 container version)_
+
+You just have to provide the list of add-ons you want to install in a file `/etc/exo/addons-list.conf` in the container:
+
+```
+docker run -d -p 8080:8080 --name=exo -v ~/addons-list.conf:/etc/exo/addons-list.conf:ro exoplatform/exo-community:latest
+```
+
+The format of the file is :
+* 1 add-on declaration per line
+* 1 add-on declaration is : `ADDON_ID` or `ADDON_ID:VERSION`
+* every line starting with a `#` character is treated as a comment and is ignored
+* every blank line is ignored
+
+```
+# Sample add-ons-list.conf file
+exo-tasks:1.0.0
+#exo-chat-community:1.2.0
+exo-answers
+```
+
 * customize some eXo Platform settings
 
 As explained in [eXo Platform documentation](https://www.exoplatform.com/docs/PLF43/PLFAdminGuide.InstallationAndStartup.CustomizingEnvironmentVariables.html) you can customize several aspects of eXo platform by settings environment variables.

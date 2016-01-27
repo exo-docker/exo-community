@@ -19,6 +19,7 @@ ENV EXO_EDITION community
 ENV EXO_DOWNLOAD http://sourceforge.net/projects/exo/files/Platform4.3/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip/download
 
 ENV EXO_APP_DIR   /opt/exo
+ENV EXO_CONF_DIR  /etc/exo
 ENV EXO_DATA_DIR  /srv/exo
 ENV EXO_LOG_DIR   /var/log/exo
 ENV EXO_TMP_DIR   /tmp/exo-tmp
@@ -44,6 +45,7 @@ RUN mkdir -p ${EXO_APP_DIR}
 RUN mkdir -p ${EXO_DATA_DIR}  && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR}
 RUN mkdir -p ${EXO_TMP_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_TMP_DIR}
 RUN mkdir -p ${EXO_LOG_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
+RUN ln -s ${EXO_APP_DIR}/current/gatein/conf /etc/exo
 
 # Install eXo Platform
 RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip ${EXO_DOWNLOAD} && \
@@ -62,7 +64,6 @@ RUN sed -i '/# Load custom settings/i \
 || echo "No Docker eXo Platform customization file : $CATALINA_BASE/bin/setenv-docker-customize.sh"\n\
 ' ${EXO_APP_DIR}/current/bin/setenv.sh && \
   grep 'setenv-docker-customize.sh' ${EXO_APP_DIR}/current/bin/setenv.sh
-
 
 RUN rm -rf ${EXO_APP_DIR}/current/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/current/logs
 
