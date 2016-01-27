@@ -10,5 +10,5 @@
 # This file contains customizations related to Docker environment.
 # -----------------------------------------------------------------------------
 
-# Change the device for antropy generation
-CATALINA_OPTS="${CATALINA_OPTS} -Djava.security.egd=file:/dev/./urandom"
+# Change the JVM Max Size parameter
+EXO_JVM_SIZE_MAX="4g"
