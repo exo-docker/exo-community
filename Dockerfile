@@ -67,6 +67,8 @@ RUN sed -i '/# Load custom settings/i \
 
 RUN rm -rf ${EXO_APP_DIR}/current/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/current/logs
 
+VOLUME ["/var/log/exo", "/srv/exo"]
+
 EXPOSE 8080
 USER ${EXO_USER}
 CMD ${EXO_APP_DIR}/current/start_eXo.sh --data ${EXO_DATA_DIR}
