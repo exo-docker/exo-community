@@ -71,4 +71,5 @@ VOLUME ["/var/log/exo", "/srv/exo"]
 
 EXPOSE 8080
 USER ${EXO_USER}
-CMD ${EXO_APP_DIR}/current/start_eXo.sh --data ${EXO_DATA_DIR}
+
+CMD ["/opt/exo/current/start_eXo.sh", "--data", "/srv/exo"]
