@@ -1,5 +1,5 @@
 # eXo Platform Community Docker container
-
+[![](https://badge.imagelayers.io/exoplatform/exo-community:latest.svg)](https://imagelayers.io/?images=exoplatform/exo-community:latest 'Get your own badge on imagelayers.io')
 * Ubuntu
 * Oracle JDK
 * eXo Platform Community edition
