@@ -20,8 +20,18 @@ echo "# ------------------------------------ #"
 echo "# eXo add-ons installation start ..."
 echo "# ------------------------------------ #"
 
+if [ -z "${EXO_ADDONS_LIST}" ]; then
+  echo "# no add-on to install from EXO_ADDONS_LIST environment variable."
+else
+  echo "# installing add-ons from EXO_ADDONS_LIST environment variable:"
+  echo ${EXO_ADDONS_LIST} | tr ',' '\n' | while read _addon ; do
+      # Install addon
+      ${EXO_APP_DIR}/current/addon install ${_addon} --force --batch-mode
+  done
+fi
+echo "# ------------------------------------ #"
 if [ -f "/etc/exo/addons-list.conf" ]; then
-  # Let's install addons from /etc/exo/addons-list.conf file
+  echo "# installing add-ons from /etc/exo/addons-list.conf file:"
   _addons_list="/etc/exo/addons-list.conf"
   while read -r _addon; do
     # Don't read empty lines
@@ -34,7 +44,7 @@ if [ -f "/etc/exo/addons-list.conf" ]; then
     ${EXO_APP_DIR}/current/addon install ${_addon} --force --batch-mode
   done < "$_addons_list"
 else
-  echo "# no add-on to install because /etc/exo/addons-list.conf file is absent."
+  echo "# no add-on to install from addons-list.conf because /etc/exo/addons-list.conf file is absent."
 fi
 echo "# ------------------------------------ #"
 echo "# eXo add-ons installation done."
