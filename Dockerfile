@@ -34,10 +34,10 @@ RUN echo "exo   ALL = NOPASSWD: ALL" > /etc/sudoers.d/exo && chmod 440 /etc/sudo
 
 # Install some useful or needed tools
 RUN apt-get -qq update && \
-  apt-get -qq -y upgrade && \
-  apt-get -qq -y install libreoffice-calc libreoffice-draw libreoffice-impress libreoffice-math libreoffice-writer && \
+  apt-get -qq -y upgrade ${_APT_OPTIONS} && \
+  apt-get -qq -y install ${_APT_OPTIONS} libreoffice-calc libreoffice-draw libreoffice-impress libreoffice-math libreoffice-writer && \
   apt-get -qq -y autoremove && \
-  apt-get -qq -y autoclean && \
+  apt-get -qq -y clean && \
   rm -rf /var/lib/apt/lists/*
 
 # Create needed directories
