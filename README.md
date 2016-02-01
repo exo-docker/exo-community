@@ -50,6 +50,14 @@ exo-tasks:1.0.0
 exo-answers
 ```
 
+### list installed eXo Platform add-ons
+
+In a running container execute the following command:
+
+```
+docker exec -ti exo /sbin/setuser exo /opt/exo/current/addon list --installed
+```
+
 ### customize some eXo Platform settings
 
 As explained in [eXo Platform documentation](https://www.exoplatform.com/docs/PLF43/PLFAdminGuide.InstallationAndStartup.CustomizingEnvironmentVariables.html) you can customize several aspects of eXo platform by settings environment variables.
