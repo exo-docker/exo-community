@@ -1,5 +1,6 @@
 # eXo Platform Community Docker container
-[![](https://badge.imagelayers.io/exoplatform/exo-community:latest.svg)](https://imagelayers.io/?images=exoplatform/exo-community:latest 'Get your own badge on imagelayers.io')
+[![Docker Stars](https://img.shields.io/docker/stars/exoplatform/exo-community.svg?maxAge=2592000)]() - [![Docker Pulls](https://img.shields.io/docker/pulls/exoplatform/exo-community.svg?maxAge=2592000)]()
+
 * Ubuntu
 * Oracle JDK
 * eXo Platform Community edition
