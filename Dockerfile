@@ -8,10 +8,10 @@
 # Run:      docker run -t -i --name=exo exoplatform/exo-community:4.3
 #           docker run -d --name=exo exoplatform/exo-community:4.3
 #           docker run -d --name=exo -p 8080:8080 exoplatform/exo-community:4.3
-#           docker run -d -v $(pwd)/setenv-customize.sh:/opt/exo/current/bin/setenv-customize.sh:ro --name=exo exoplatform/exo-community:latest
+#           docker run -d -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro --name=exo exoplatform/exo-community:latest
 
 FROM       exoplatform/base-jdk:jdk8
-MAINTAINER DROUET Frederic <fdrouet+docker@exoplatform.com>
+MAINTAINER eXo Platform <docker@exoplatform.com>
 
 # Environment variables
 ENV EXO_VERSION 4.3.0
@@ -28,9 +28,9 @@ ENV EXO_USER exo
 ENV EXO_GROUP ${EXO_USER}
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN useradd --create-home --user-group --shell /bin/bash ${EXO_USER}
-# giving all rights to eXo user
-RUN echo "exo   ALL = NOPASSWD: ALL" > /etc/sudoers.d/exo && chmod 440 /etc/sudoers.d/exo
+RUN useradd --create-home --user-group --shell /bin/bash ${EXO_USER} && \
+    # giving all rights to eXo user
+    echo "exo   ALL = NOPASSWD: ALL" > /etc/sudoers.d/exo && chmod 440 /etc/sudoers.d/exo
 
 # Install some useful or needed tools
 RUN apt-get -qq update && \
@@ -41,35 +41,34 @@ RUN apt-get -qq update && \
   rm -rf /var/lib/apt/lists/*
 
 # Create needed directories
-RUN mkdir -p ${EXO_APP_DIR}
-RUN mkdir -p ${EXO_DATA_DIR}  && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR}
-RUN mkdir -p ${EXO_TMP_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_TMP_DIR}
-RUN mkdir -p ${EXO_LOG_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
-RUN ln -s ${EXO_APP_DIR}/current/gatein/conf /etc/exo
+# RUN mkdir -p ${EXO_APP_DIR}   && \
+RUN mkdir -p ${EXO_DATA_DIR}  && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR} && \
+    mkdir -p ${EXO_TMP_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_TMP_DIR}  && \
+    mkdir -p ${EXO_LOG_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
 
 # Install eXo Platform
 RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip ${EXO_DOWNLOAD} && \
-    unzip -q /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip -d ${EXO_APP_DIR} && \
+    unzip -q /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip -d /srv/downloads/ && \
     rm -f /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip && \
-    ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR}/current && \
-    chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR}/current/
+    mv /srv/downloads/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR} && \
+    chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR} && \
+    ln -s ${EXO_APP_DIR}/gatein/conf /etc/exo && \
+    rm -rf ${EXO_APP_DIR}/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/logs
 
 # Install Docker customization file
-ADD setenv-docker-customize.sh ${EXO_APP_DIR}/current/bin/setenv-docker-customize.sh
-RUN chmod 755 ${EXO_APP_DIR}/current/bin/setenv-docker-customize.sh & chown exo:exo ${EXO_APP_DIR}/current/bin/setenv-docker-customize.sh
-RUN sed -i '/# Load custom settings/i \
+ADD setenv-docker-customize.sh ${EXO_APP_DIR}/bin/setenv-docker-customize.sh
+RUN chmod 755 ${EXO_APP_DIR}/bin/setenv-docker-customize.sh && \
+    chown exo:exo ${EXO_APP_DIR}/bin/setenv-docker-customize.sh && \
+    sed -i '/# Load custom settings/i \
 \# Load custom settings for docker environment\n\
 [ -r "$CATALINA_BASE/bin/setenv-docker-customize.sh" ] \
 && . "$CATALINA_BASE/bin/setenv-docker-customize.sh" \
 || echo "No Docker eXo Platform customization file : $CATALINA_BASE/bin/setenv-docker-customize.sh"\n\
-' ${EXO_APP_DIR}/current/bin/setenv.sh && \
-  grep 'setenv-docker-customize.sh' ${EXO_APP_DIR}/current/bin/setenv.sh
-
-RUN rm -rf ${EXO_APP_DIR}/current/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/current/logs
-
-VOLUME ["/var/log/exo", "/srv/exo"]
+' ${EXO_APP_DIR}/bin/setenv.sh && \
+  grep 'setenv-docker-customize.sh' ${EXO_APP_DIR}/bin/setenv.sh
 
 EXPOSE 8080
 USER ${EXO_USER}
 
-CMD ["/opt/exo/current/start_eXo.sh", "--data", "/srv/exo"]
+WORKDIR "/opt/exo/"
+ENTRYPOINT ["/opt/exo/start_eXo.sh", "--data", "/srv/exo"]
