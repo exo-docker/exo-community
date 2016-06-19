@@ -1,0 +1,41 @@
+version: '2'
+services:
+  exo:
+    image: exoplatform/exo-community:develop
+    environment:
+      EXO_DB_TYPE: mysql
+      EXO_DB_NAME: exo
+      EXO_DB_USER: exo
+      EXO_DB_PASSWORD: exo
+      EXO_DB_HOST: mysql
+      EXO_ADDONS_LIST: exo-jdbc-driver-mysql
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    volumes:
+      - exo_data:/srv/exo
+      - exo_logs:/var/log/exo
+    links:
+      - mysql
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:5.5
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: exo
+      MYSQL_USER: exo
+      MYSQL_PASSWORD: exo
+    volumes:
+      - mysql_data:/var/lib/mysql
+volumes:
+  exo_data:
+    external:
+      name: exo_data
+  exo_logs:
+    external:
+      name: exo_logs
+  mysql_data:
+    external:
+      name: mysql_data
