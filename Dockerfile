@@ -14,9 +14,9 @@ FROM       exoplatform/base-jdk:jdk8
 MAINTAINER DROUET Frederic <fdrouet+docker@exoplatform.com>
 
 # Environment variables
-ENV EXO_VERSION 4.3.0
+ENV EXO_VERSION 4.4.0
 ENV EXO_EDITION community
-ENV EXO_DOWNLOAD http://sourceforge.net/projects/exo/files/Platform4.3/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip/download
+ENV EXO_DOWNLOAD https://downloads.exoplatform.org/public/exo-platform-${EXO_EDITION}-edition-${EXO_VERSION}-latest.zip
 
 ENV EXO_APP_DIR   /opt/exo
 ENV EXO_CONF_DIR  /etc/exo
@@ -51,7 +51,7 @@ RUN ln -s ${EXO_APP_DIR}/current/gatein/conf /etc/exo
 RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip ${EXO_DOWNLOAD} && \
     unzip -q /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip -d ${EXO_APP_DIR} && \
     rm -f /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip && \
-    ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR}/current && \
+    ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION}* ${EXO_APP_DIR}/current && \
     chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR}/current/
 
 # Install Docker customization file
