@@ -51,7 +51,7 @@ RUN ln -s ${EXO_APP_DIR}/current/gatein/conf /etc/exo
 RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip ${EXO_DOWNLOAD} && \
     unzip -q /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip -d ${EXO_APP_DIR} && \
     rm -f /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip && \
-    ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR}/current && \
+    ln -s ${EXO_APP_DIR}/platform-${EXO_EDITION}-${EXO_VERSION}* ${EXO_APP_DIR}/current && \
     chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR}/current/
 
 # Install Docker customization file
