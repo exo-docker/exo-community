@@ -14,9 +14,7 @@ FROM       exoplatform/base-jdk:jdk8
 MAINTAINER eXo Platform <docker@exoplatform.com>
 
 # Environment variables
-ENV EXO_VERSION 4.4.0
-ENV EXO_EDITION community
-ENV EXO_DOWNLOAD https://downloads.exoplatform.org/public/exo-platform-${EXO_EDITION}-edition-${EXO_VERSION}.zip
+ENV EXO_VERSION 5.0.0-M08
 
 ENV EXO_APP_DIR   /opt/exo
 ENV EXO_CONF_DIR  /etc/exo
@@ -47,13 +45,13 @@ RUN mkdir -p ${EXO_DATA_DIR}  && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR} 
     mkdir -p ${EXO_LOG_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
 
 # Install eXo Platform
-RUN curl -L -o /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip ${EXO_DOWNLOAD} && \
-    unzip -q /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip -d /srv/downloads/ && \
-    rm -f /srv/downloads/eXo-Platform-${EXO_EDITION}-${EXO_VERSION}.zip && \
-    mv /srv/downloads/platform-${EXO_EDITION}-${EXO_VERSION} ${EXO_APP_DIR} && \
-    chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR} && \
-    ln -s ${EXO_APP_DIR}/gatein/conf /etc/exo && \
-    rm -rf ${EXO_APP_DIR}/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/logs
+RUN curl -L -o /srv/downloads/eXo-Platform-community-${EXO_VERSION}.zip https://downloads.exoplatform.org/public/exo-platform-community-edition-${EXO_VERSION}.zip \
+    && unzip -q /srv/downloads/eXo-Platform-community-${EXO_VERSION}.zip -d /srv/downloads/ \
+    && rm -f /srv/downloads/eXo-Platform-community-${EXO_VERSION}.zip \
+    && mv /srv/downloads/platform-community-${EXO_VERSION} ${EXO_APP_DIR} \
+    && chown -R ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR} \
+    && ln -s ${EXO_APP_DIR}/gatein/conf /etc/exo \
+    && rm -rf ${EXO_APP_DIR}/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/logs
 
 # Install Docker customization file
 ADD setenv-docker-customize.sh ${EXO_APP_DIR}/bin/setenv-docker-customize.sh

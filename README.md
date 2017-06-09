@@ -97,11 +97,11 @@ docker run -d -p 8080:8080 --name=exo -v ~/setenv-customize.sh:/opt/exo/current/
 
 ## List of available versions
 
-|    Image                         |  JDK  |   eXo Platform           |  Size
-|----------------------------------|-------|--------------------------|----------------
-|exoplatform/exo-community:latest  |   8   | 4.3.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:latest.svg)](https://imagelayers.io/?images=exoplatform/exo-community:latest 'Get your own badge on imagelayers.io')
-|exoplatform/exo-community:develop |   8   | 4.3.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:develop.svg)](https://imagelayers.io/?images=exoplatform/exo-community:develop 'Get your own badge on imagelayers.io')
-|exoplatform/exo-community:4.4     |   8   | 4.4.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:4.4.svg)](https://imagelayers.io/?images=exoplatform/exo-community:4.4 'Get your own badge on imagelayers.io')
-|exoplatform/exo-community:4.3     |   8   | 4.3.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:4.3.svg)](https://imagelayers.io/?images=exoplatform/exo-community:4.3 'Get your own badge on imagelayers.io')
-|exoplatform/exo-community:4.2     |   7   | 4.2.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:4.2.svg)](https://imagelayers.io/?images=exoplatform/exo-community:4.2 'Get your own badge on imagelayers.io')
-|exoplatform/exo-community:4.1     |   7   | 4.1.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:4.1.svg)](https://imagelayers.io/?images=exoplatform/exo-community:4.1 'Get your own badge on imagelayers.io')
+|    Image                         |  JDK  |   eXo Platform           
+|----------------------------------|-------|--------------------------
+|exoplatform/exo-community:develop |   8   | 5.0 Community edition  
+|exoplatform/exo-community:latest  |   8   | 4.4 Community edition  
+|exoplatform/exo-community:4.4     |   8   | 4.4 Community edition  
+|exoplatform/exo-community:4.3     |   8   | 4.3 Community edition  
+|exoplatform/exo-community:4.2     |   7   | 4.2 Community edition  
+|exoplatform/exo-community:4.1     |   7   | 4.1 Community edition  
