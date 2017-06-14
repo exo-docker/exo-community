@@ -1,4 +1,3 @@
-
 # eXo Platform Community Docker image
 [![Docker Stars](https://img.shields.io/docker/stars/exoplatform/exo-community.svg)]() [![Docker Pulls](https://img.shields.io/docker/pulls/exoplatform/exo-community.svg)]()
 
@@ -43,8 +42,8 @@ The standard eXo Platform environment variables can be used :
 | EXO_JVM_SIZE_MAX | NO | `3g` | specify the jvm maximum allocated memory size (-Xmx parameter)
 | EXO_JVM_PERMSIZE_MAX | NO | `256m` | (Java 7) specify the jvm maximum allocated memory to Permgen (-XX:MaxPermSize parameter)
 | EXO_JVM_METASPACE_SIZE_MAX | NO | `512m` | (Java 8+) specify the jvm maximum allocated memory to MetaSpace (-XX:MaxMetaspaceSize parameter)
-| EXO_JVM_USER_LANGUAGE | NO | `en` | specify the jvm maximum allocated memory size (-Duser.language parameter)
-| EXO_JVM_USER_REGION | NO | `US` | specify the jvm maximum allocated memory size (-Duser.region parameter)
+| EXO_JVM_USER_LANGUAGE | NO | `en` | specify the jvm locale for langage (-Duser.language parameter)
+| EXO_JVM_USER_REGION | NO | `US` | specify the jvm local for region (-Duser.region parameter)
 
 INFO: This list is not exhaustive (see eXo Platform documentation or {EXO_HOME}/bin/setenv.sh for more parameters)
 
