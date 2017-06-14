@@ -192,7 +192,7 @@ else
       echo "ERROR during xmlstarlet processing (configuring Connector proxy)"
       exit 1
     }
-    if [ "${EXO_PROXY_PORT}" = "443" ]; then
+    if [ "${EXO_PROXY_PORT}" = "80" ]; then
       add_in_exo_configuration "exo.base.url=http://${EXO_PROXY_VHOST}"
     else
       add_in_exo_configuration "exo.base.url=http://${EXO_PROXY_VHOST}:${EXO_PROXY_PORT}"
@@ -254,7 +254,7 @@ else
     add_in_exo_configuration "es.http.port=${EXO_ES_PORT}"
     add_in_exo_configuration "es.path.data=${EXO_ES_EMBEDDED_DATA}"
   fi
-  
+
   add_in_exo_configuration "exo.es.search.server.url=${EXO_ES_URL}"
   add_in_exo_configuration "exo.es.index.server.url=${EXO_ES_URL}"
 
