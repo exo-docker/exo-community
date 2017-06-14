@@ -5,10 +5,10 @@
 
 # Build:    docker build -t exoplatform/exo-community .
 #
-# Run:      docker run -t -i --name=exo exoplatform/exo-community
-#           docker run -d --name=exo exoplatform/exo-community
-#           docker run -d --name=exo -p 8080:8080 exoplatform/exo-community
-#           docker run -d -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro --name=exo exoplatform/exo-community
+# Run:      docker run -p 8080:8080 exoplatform/exo-community
+#           docker run -d -p 8080:8080 exoplatform/exo-community
+#           docker run -d --rm -p 8080:8080 -v exo_data:/srv/exo exoplatform/exo-community
+#           docker run -d -p 8080:8080 -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro exoplatform/exo-community
 
 FROM       exoplatform/base-jdk:jdk8
 MAINTAINER eXo Platform <docker@exoplatform.com>
