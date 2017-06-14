@@ -59,7 +59,7 @@ RUN curl -L -o /srv/downloads/eXo-Platform-community-${EXO_VERSION}.zip https://
 # Install Docker customization file
 ADD scripts/setenv-docker-customize.sh ${EXO_APP_DIR}/bin/setenv-docker-customize.sh
 RUN chmod 755 ${EXO_APP_DIR}/bin/setenv-docker-customize.sh \
-    && chown exo:exo ${EXO_APP_DIR}/bin/setenv-docker-customize.sh \
+    && chown ${EXO_USER}:${EXO_USER} ${EXO_APP_DIR}/bin/setenv-docker-customize.sh \
     && sed -i '/# Load custom settings/i \
 \# Load custom settings for docker environment\n\
 [ -r "$CATALINA_BASE/bin/setenv-docker-customize.sh" ] && { \n\
