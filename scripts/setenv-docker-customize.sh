@@ -328,7 +328,7 @@ if [ -f /opt/exo/_done.addons ]; then
   echo "INFO: add-ons installation already done! skipping this step."
 else
   echo "# ------------------------------------ #"
-  echo "# eXo add-ons installation start ..."
+  echo "# eXo add-ons management start ..."
   echo "# ------------------------------------ #"
 
   if [ ! -z "${EXO_ADDONS_CATALOG_URL:-}" ]; then
@@ -336,6 +336,28 @@ else
     _ADDON_MGR_OPTIONS="--catalog=${EXO_ADDONS_CATALOG_URL}"
   fi
 
+  # add-ons removal
+  if [ -z "${EXO_ADDONS_REMOVE_LIST:-}" ]; then
+    echo "# no add-on to uninstall from EXO_ADDONS_REMOVE_LIST environment variable."
+  else
+    echo "# uninstalling default add-ons from EXO_ADDONS_REMOVE_LIST environment variable:"
+    echo ${EXO_ADDONS_REMOVE_LIST} | tr ',' '\n' | while read _addon ; do
+      # Uninstall addon
+      ${EXO_APP_DIR}/addon uninstall ${_ADDON_MGR_OPTIONS:-} ${_addon}
+      if [ $? != 0 ]; then
+        echo "[ERROR] Problem during add-on [${_addon}] uninstall."
+        exit 1
+      fi
+    done
+    if [ $? != 0 ]; then
+      echo "[ERROR] An error during add-on uninstallation phase aborted eXo startup !"
+      exit 1
+    fi
+  fi
+
+  echo "# ------------------------------------ #"
+  
+  # add-on installation
   if [ -z "${EXO_ADDONS_LIST:-}" ]; then
     echo "# no add-on to install from EXO_ADDONS_LIST environment variable."
   else
@@ -354,7 +376,7 @@ else
     fi
   fi
   echo "# ------------------------------------ #"
-  echo "# eXo add-ons installation done."
+  echo "# eXo add-ons management done."
   echo "# ------------------------------------ #"
 
   # put a file to avoid doing the configuration twice
