@@ -25,12 +25,15 @@ ENV EXO_TMP_DIR   /tmp/exo-tmp
 ENV EXO_USER exo
 ENV EXO_GROUP ${EXO_USER}
 
+# allow to override the list of addons to package by default
+ARG ADDONS="exo-jdbc-driver-mysql:1.1.0"
+
 # Customise system
 RUN rm -f /bin/sh && ln -s /bin/bash /bin/sh
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
+# giving all rights to eXo user
 RUN useradd --create-home --user-group --shell /bin/bash ${EXO_USER} \
-    # giving all rights to eXo user
     && echo "exo   ALL = NOPASSWD: ALL" > /etc/sudoers.d/exo && chmod 440 /etc/sudoers.d/exo
 
 # Install some useful or needed tools
@@ -81,5 +84,7 @@ USER ${EXO_USER}
 
 WORKDIR "/opt/exo/"
 VOLUME ["/srv/exo"]
+
+RUN for a in ${ADDONS}; do echo "Installing addon $a"; /opt/exo/addon install $a; done
 
 ENTRYPOINT ["/opt/exo/start_eXo.sh", "--data", "/srv/exo"]

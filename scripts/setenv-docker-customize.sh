@@ -78,7 +78,6 @@ case "${EXO_DB_TYPE}" in
     [ -z "${EXO_DB_PASSWORD}" ] && { echo "ERROR: you must provide a database password with EXO_DB_PASSWORD environment variable"; exit 1;}
     [ -z "${EXO_DB_HOST}" ] && EXO_DB_HOST="mysql"
     [ -z "${EXO_DB_PORT}" ] && EXO_DB_PORT="3306"
-    [ -z "${EXO_DB_INSTALL_DRIVER}" ] && EXO_DB_INSTALL_DRIVER="true"
     ;;
   *)
     echo "ERROR: you must provide a supported database type with EXO_DB_TYPE environment variable (current value is '${EXO_DB_TYPE}')"
@@ -143,15 +142,6 @@ else
       cat /opt/exo/conf/server-mysql.xml > /opt/exo/conf/server.xml
       replace_in_file /opt/exo/conf/server.xml "jdbc:mysql://localhost:3306/plf" "jdbc:mysql://${EXO_DB_HOST}:${EXO_DB_PORT}/${EXO_DB_NAME}"
       replace_in_file /opt/exo/conf/server.xml 'username="plf" password="plf"' 'username="'${EXO_DB_USER}'" password="'${EXO_DB_PASSWORD}'"'
-      if [ "${EXO_DB_INSTALL_DRIVER}" = "true" ]; then
-        ${EXO_APP_DIR}/addon install ${_ADDON_MGR_OPTIONS:-} exo-jdbc-driver-mysql --batch-mode
-        if [ $? != 0 ]; then
-          echo "[ERROR] Impossible to install MySQL Driver add-on."
-          exit 1
-        fi
-      else
-        echo "WARNING: no database driver will be automatically installed (EXO_DB_INSTALL_DRIVER=false)."
-      fi
       ;;
     *) echo "ERROR: you must provide a supported database type with EXO_DB_TYPE environment variable (current value is '${EXO_DB_TYPE}')";
       exit 1;;

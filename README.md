@@ -226,3 +226,17 @@ docker run -d \
     -e EXO_JVM_SIZE_MAX="8g" \
     exoplatform/exo-community
 ```
+
+# Image build
+
+The simplest way to build this image is to use default values :
+
+    docker build -t exoplatform/exo-community .
+
+This will produce an image with the current eXo Platform Community edition.
+
+The build can be customized with the following arguments :
+
+|    ARGUMENT NAME    |  MANDATORY  |   DEFAULT VALUE          |  DESCRIPTION
+|--------------------------|-------------|--------------------------|----------------
+| ADDONS | NO | `exo-chat exo-tasks:1.1.0 exo-jdbc-driver-mysql:1.1.0` | a space separated list of add-ons to install (default: exo-jdbc-driver-mysql:1.1.0)
