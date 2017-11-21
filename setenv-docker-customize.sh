@@ -60,9 +60,7 @@ else
     mysql)
       cat /opt/exo/conf/server-mysql.xml > /opt/exo/conf/server.xml
       replace_in_file /opt/exo/conf/server.xml "jdbc:mysql://localhost:3306/plf" "jdbc:mysql://${EXO_DB_HOST}:${EXO_DB_PORT}/${EXO_DB_NAME}"
-      # sed -i 's,jdbc:mysql://localhost:3306/plf,jdbc:mysql://'${EXO_DB_HOST}':'${EXO_DB_PORT}'/'${EXO_DB_NAME}',g' /opt/exo/conf/server.xml
       replace_in_file /opt/exo/conf/server.xml 'username="plf" password="plf"' 'username="'${EXO_DB_USER}'" password="'${EXO_DB_PASSWORD}'"'
-      # sed -i 's,username="plf" password="plf",username="'${EXO_DB_USER}'" password="'${EXO_DB_PASSWORD}'",g' /opt/exo/conf/server.xml
       ;;
     *) echo "ERROR: you must provide a supported database type with EXO_DB_TYPE environment variable (current value is '${EXO_DB_TYPE}')";
       exit 1;;

@@ -105,3 +105,17 @@ docker run -d -p 8080:8080 --name=exo -v ~/setenv-customize.sh:/opt/exo/current/
 |exoplatform/exo-community:4.3     |   8   | 4.3.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:4.3.svg)](https://imagelayers.io/?images=exoplatform/exo-community:4.3 'Get your own badge on imagelayers.io')
 |exoplatform/exo-community:4.2     |   7   | 4.2.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:4.2.svg)](https://imagelayers.io/?images=exoplatform/exo-community:4.2 'Get your own badge on imagelayers.io')
 |exoplatform/exo-community:4.1     |   7   | 4.1.0 Community edition  |[![](https://badge.imagelayers.io/exoplatform/exo-community:4.1.svg)](https://imagelayers.io/?images=exoplatform/exo-community:4.1 'Get your own badge on imagelayers.io')
+
+# Image build
+
+The simplest way to build this image is to use default values :
+
+    docker build -t exoplatform/exo-community .
+
+This will produce an image with the current eXo Platform Community edition.
+
+The build can be customized with the following arguments :
+
+|    ARGUMENT NAME    |  MANDATORY  |   DEFAULT VALUE          |  DESCRIPTION
+|--------------------------|-------------|--------------------------|----------------
+| ADDONS | NO | `exo-chat exo-tasks:1.0.0 exo-jdbc-driver-mysql:1.0.0` | a space separated list of add-ons to install (default: exo-jdbc-driver-mysql:1.0.0)
