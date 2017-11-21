@@ -10,8 +10,8 @@
 #           docker run -d --name=exo -p 8080:8080 exoplatform/exo-community:4.4
 #           docker run -d -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro --name=exo exoplatform/exo-community:latest
 
-FROM       exoplatform/base-jdk:jdk8
-MAINTAINER eXo Platform <docker@exoplatform.com>
+FROM    exoplatform/base-jdk:jdk8
+LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
 
 # Environment variables
 ENV EXO_VERSION 4.4.0
