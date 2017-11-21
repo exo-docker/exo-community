@@ -10,8 +10,8 @@
 #           docker run -d --rm -p 8080:8080 -v exo_data:/srv/exo exoplatform/exo-community
 #           docker run -d -p 8080:8080 -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro exoplatform/exo-community
 
-FROM       exoplatform/base-jdk:jdk8
-MAINTAINER eXo Platform <docker@exoplatform.com>
+FROM    exoplatform/base-jdk:jdk8
+LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
 
 # Environment variables
 ENV EXO_VERSION 5.0.0-M32
