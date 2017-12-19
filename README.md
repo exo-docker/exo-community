@@ -66,6 +66,14 @@ The following environment variables must be passed to the container to configure
 | EXO_PROXY_PORT | NO | - | which port to use on the proxy server ? if empty it will automatically defined regarding EXO_PROXY_SSL value (true => 443 / false => 8080)
 | EXO_PROXY_SSL | NO | `false` | is ssl activated on the proxy server ? (true / false)
 
+## Tomcat
+
+The following environment variables can be passed to the container to configure Tomcat settings
+
+|    VARIABLE            |  MANDATORY  |   DEFAULT VALUE          |  DESCRIPTION
+|------------------------|-------------|--------------------------|----------------
+| EXO_ACCESS_LOG_ENABLED | NO | `false` | activate Tomcat access log with combine format and a daily log file rotation
+
 ### Data on disk
 
 The following environment variables must be passed to the container in order to work :

@@ -102,6 +102,8 @@ esac
 [ -z "${EXO_JMX_USERNAME}" ] && EXO_JMX_USERNAME="-"
 [ -z "${EXO_JMX_PASSWORD}" ] && EXO_JMX_PASSWORD="-"
 
+[ -z "${EXO_ACCESS_LOG_ENABLED}" ] && EXO_ACCESS_LOG_ENABLED="false"
+
 [ -z "${EXO_MONGO_HOST}" ] && EXO_MONGO_HOST="mongo"
 [ -z "${EXO_MONGO_PORT}" ] && EXO_MONGO_PORT="27017"
 [ -z "${EXO_MONGO_USERNAME}" ] && EXO_MONGO_USERNAME="-"
@@ -237,6 +239,25 @@ else
     # /opt/exo/conf/jmxremote.access
     echo "${EXO_JMX_USERNAME} readwrite" > /opt/exo/conf/jmxremote.access
     fi
+  fi
+
+  # Access log configuration
+  if [ "${EXO_ACCESS_LOG_ENABLED}" = "true" ]; then
+    # Add a new valve (just before the end of Host)
+    xmlstarlet ed -L -s "/Server/Service/Engine/Host" -t elem -n "ValveTMP" -v "" \
+      -i "//ValveTMP" -t attr -n "className" -v "org.apache.catalina.valves.AccessLogValve" \
+      -i "//ValveTMP" -t attr -n "pattern" -v "combined" \
+      -i "//ValveTMP" -t attr -n "directory" -v "logs" \
+      -i "//ValveTMP" -t attr -n "prefix" -v "access" \
+      -i "//ValveTMP" -t attr -n "suffix" -v ".log" \
+      -i "//ValveTMP" -t attr -n "rotatable" -v "true" \
+      -i "//ValveTMP" -t attr -n "renameOnRotate" -v "true" \
+      -i "//ValveTMP" -t attr -n "fileDateFormat" -v ".yyyy-MM-dd" \
+      -r "//ValveTMP" -v Valve \
+      /opt/exo/conf/server.xml || {
+      echo "ERROR during xmlstarlet processing (adding AccessLogValve)"
+      exit 1
+    }
   fi
 
   # Elasticsearch configuration
