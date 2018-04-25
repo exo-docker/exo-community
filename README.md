@@ -99,6 +99,12 @@ The following environment variables must be passed to the container in order to 
 | EXO_DB_USER | NO | `exo` | the username to connect to the database
 | EXO_DB_PASSWORD | YES | - | the password to connect to the database
 
+### MySQL
+
+|    VARIABLE          |  MANDATORY  |   DEFAULT VALUE  |  DESCRIPTION
+|----------------------|-------------|------------------|----------------
+| EXO_DB_MYSQL_USE_SSL | NO          | `false`          | connecting securely to MySQL using SSL (see MySQL Connector/J documentation for useSSL parameter)
+
 ## Mongodb
 
 The following environment variables should be passed to the container in order to work if you installed eXo Chat add-on :

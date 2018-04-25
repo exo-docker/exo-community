@@ -28,7 +28,7 @@ services:
     depends_on:
       - mysql
   mysql:
-    image: mysql:5.6
+    image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: my-super-secret-pw
       MYSQL_DATABASE: exo
