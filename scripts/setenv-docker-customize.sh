@@ -269,6 +269,9 @@ else
     add_in_exo_configuration "es.discovery.zen.ping.multicast.enabled=false"
     add_in_exo_configuration "es.http.port=${EXO_ES_PORT}"
     add_in_exo_configuration "es.path.data=${EXO_ES_EMBEDDED_DATA}"
+  else
+    # Remove eXo ES Embedded add-on
+    EXO_ADDONS_REMOVE_LIST="${EXO_ADDONS_REMOVE_LIST:-},exo-es-embedded"
   fi
 
   add_in_exo_configuration "exo.es.search.server.url=${EXO_ES_URL}"

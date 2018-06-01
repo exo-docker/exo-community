@@ -125,7 +125,7 @@ The following environment variables should be passed to the container in order t
 
 |    VARIABLE              |  MANDATORY  |   DEFAULT VALUE          |  DESCRIPTION
 |--------------------------|-------------|--------------------------|----------------
-| EXO_ES_EMBEDDED | NO | `true` | do we use an elasticsearch server embedded in the eXo Platform JVM or do we use an external one ? (using an embedded elasticsearch server is not recommanded for production purpose)
+| EXO_ES_EMBEDDED | NO | `true` | do we use an elasticsearch server embedded in the eXo Platform JVM or do we use an external one ? (using an embedded elasticsearch server is not recommanded for production purpose) (if set to `false` the add-on `exo-es-embedded` is uninstalled during container creation)
 | EXO_ES_EMBEDDED_DATA | NO | `/srv/exo/es/` | The directory to use for storing elasticsearch data (in embedded mode only).
 | EXO_ES_SCHEME | NO | `http` | the elasticsearch server scheme to use from the eXo Platform server jvm perspective (http / https).
 | EXO_ES_HOST | NO | `localhost` | the elasticsearch server hostname to use from the eXo Platform server jvm perspective.
