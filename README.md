@@ -1,35 +1,63 @@
-# eXo Platform Community Docker image
-[![Docker Stars](https://img.shields.io/docker/stars/exoplatform/exo-community.svg)]() [![Docker Pulls](https://img.shields.io/docker/pulls/exoplatform/exo-community.svg)]()
+# eXo Platform Community Docker image <!-- omit in toc -->
+
+![Docker Stars](https://img.shields.io/docker/stars/exoplatform/exo-community.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/exoplatform/exo-community.svg)
 
 The eXo Platform Community edition Docker image support `HSQLDB` (for testing) and `MySQL` (for production).
 
-|    Image                         |  JDK  |   eXo Platform           
+|    Image                         |  JDK  |   eXo Platform
 |----------------------------------|-------|--------------------------
-|exoplatform/exo-community:develop |   8   | 5.1 Community edition  
-|exoplatform/exo-community:latest  |   8   | 5.1 Community edition  
-|exoplatform/exo-community:5.1     |   8   | 5.1 Community edition  
-|exoplatform/exo-community:5.0     |   8   | 5.0 Community edition  
-|exoplatform/exo-community:4.4     |   8   | 4.4 Community edition  
-|exoplatform/exo-community:4.3     |   8   | 4.3 Community edition  
-|exoplatform/exo-community:4.2     |   7   | 4.2 Community edition  
-|exoplatform/exo-community:4.1     |   7   | 4.1 Community edition  
+|exoplatform/exo-community:develop |   8   | 5.1 Community edition
+|exoplatform/exo-community:latest  |   8   | 5.1 Community edition
+|exoplatform/exo-community:5.1     |   8   | 5.1 Community edition
+|exoplatform/exo-community:5.0     |   8   | 5.0 Community edition
+|exoplatform/exo-community:4.4     |   8   | 4.4 Community edition
+|exoplatform/exo-community:4.3     |   8   | 4.3 Community edition
+|exoplatform/exo-community:4.2     |   7   | 4.2 Community edition
+|exoplatform/exo-community:4.1     |   7   | 4.1 Community edition
+
+- [Quick start](#quick-start)
+- [Configuration options](#configuration-options)
+  - [Add-ons](#add-ons)
+  - [JVM](#jvm)
+  - [Frontend proxy](#frontend-proxy)
+  - [Tomcat](#tomcat)
+    - [Data on disk](#data-on-disk)
+  - [Database](#database)
+    - [MySQL](#mysql)
+  - [Mongodb](#mongodb)
+  - [ElasticSearch](#elasticsearch)
+  - [Mail](#mail)
+  - [JMX](#jmx)
+- [How-to](#how-to)
+  - [configure eXo Platform behind a reverse-proxy](#configure-exo-platform-behind-a-reverse-proxy)
+  - [use MySQL database](#use-mysql-database)
+  - [see eXo Platform logs](#see-exo-platform-logs)
+  - [install eXo Platform add-ons](#install-exo-platform-add-ons)
+  - [list eXo Platform add-ons available](#list-exo-platform-add-ons-available)
+  - [list eXo Platform add-ons installed](#list-exo-platform-add-ons-installed)
+  - [customize some eXo Platform settings](#customize-some-exo-platform-settings)
+- [Image build](#image-build)
 
 ## Quick start
 
 The prerequisites are :
-* Docker daemon version 12+ + internet access
-* 4GB of available RAM + 1GB of disk
 
+- Docker daemon version 12+ + internet access
+- 4GB of available RAM + 1GB of disk
 
 The most basic way to start eXo Platform Community edition for *evaluation* purpose is to execute
-```
+
+```bash
 docker run -v exo_data:/srv/exo -p 8080:8080 exoplatform/exo-community
 ```
+
 and then waiting the log line which say that the server is started
-```
+
+```log
 2017-05-22 10:49:30,176 | INFO  | Server startup in 83613 ms [org.apache.catalina.startup.Catalina<main>]
 ```
-When ready just go to http://localhost:8080 and follow the instructions ;-)
+
+When ready just go to <http://localhost:8080> and follow the instructions ;-)
 
 ## Configuration options
 
@@ -67,7 +95,7 @@ The following environment variables must be passed to the container to configure
 | EXO_PROXY_PORT | NO | - | which port to use on the proxy server ? if empty it will automatically defined regarding EXO_PROXY_SSL value (true => 443 / false => 8080)
 | EXO_PROXY_SSL | NO | `false` | is ssl activated on the proxy server ? (true / false)
 
-## Tomcat
+### Tomcat
 
 The following environment variables can be passed to the container to configure Tomcat settings
 
@@ -75,7 +103,7 @@ The following environment variables can be passed to the container to configure 
 |------------------------|-------------|--------------------------|----------------
 | EXO_ACCESS_LOG_ENABLED | NO | `false` | activate Tomcat access log with combine format and a daily log file rotation
 
-### Data on disk
+#### Data on disk
 
 The following environment variables must be passed to the container in order to work :
 
@@ -99,27 +127,27 @@ The following environment variables must be passed to the container in order to 
 | EXO_DB_USER | NO | `exo` | the username to connect to the database
 | EXO_DB_PASSWORD | YES | - | the password to connect to the database
 
-### MySQL
+#### MySQL
 
 |    VARIABLE          |  MANDATORY  |   DEFAULT VALUE  |  DESCRIPTION
 |----------------------|-------------|------------------|----------------
 | EXO_DB_MYSQL_USE_SSL | NO          | `false`          | connecting securely to MySQL using SSL (see MySQL Connector/J documentation for useSSL parameter)
 
-## Mongodb
+### Mongodb
 
 The following environment variables should be passed to the container in order to work if you installed eXo Chat add-on :
 
 |    VARIABLE              |  MANDATORY  |   DEFAULT VALUE          |  DESCRIPTION
 |--------------------------|-------------|--------------------------|----------------
-| EXO_MONGO_HOST | NO | `mongo` | the hostname to connect to the mongodb database for eXo Chat 
+| EXO_MONGO_HOST | NO | `mongo` | the hostname to connect to the mongodb database for eXo Chat
 | EXO_MONGO_PORT | NO | `27017` | the port to connect to the mongodb server
 | EXO_MONGO_USERNAME | NO | - | the username to use to connect to the mongodb database (no authentification configured by default)
 | EXO_MONGO_PASSWORD | NO | - | the password to use to connect to the mongodb database (no authentification configured by default)
-| EXO_MONGO_DB_NAME | NO | `chat` | the mongodb database name to use for eXo Chat 
+| EXO_MONGO_DB_NAME | NO | `chat` | the mongodb database name to use for eXo Chat
 
 INFO: you must configure and start an external MongoDB server by yourself
 
-## ElasticSearch
+### ElasticSearch
 
 The following environment variables should be passed to the container in order to configure the search feature on an external Elastic Search server:
 
@@ -137,7 +165,7 @@ The following environment variables should be passed to the container in order t
 
 INFO: the default embedded ElasticSearch in not recommended for production purpose.
 
-## Mail
+### Mail
 
 The following environment variables should be passed to the container in order to configure the mail server configuration to use :
 
@@ -150,7 +178,7 @@ The following environment variables should be passed to the container in order t
 | EXO_MAIL_SMTP_USERNAME | NO | - | authentication username for smtp server (if needed)
 | EXO_MAIL_SMTP_PASSWORD | NO | - | authentication password for smtp server (if needed)
 
-## JMX
+### JMX
 
 The following environment variables should be passed to the container in order to configure JMX :
 
@@ -165,17 +193,17 @@ The following environment variables should be passed to the container in order t
 
 With the default parameters you can connect to JMX with `service:jmx:rmi://localhost:10002/jndi/rmi://localhost:10001/jmxrmi` without authentication.
 
-## How-to ...
+## How-to
 
 ### configure eXo Platform behind a reverse-proxy
 
 You have to specify the following environment variables to configure eXo Platform (see upper section for more parameters and details) :
 
-```
+```bash
 docker run -d \
-    -p 8080:8080 \
-    -e EXO_PROXY_VHOST="my.public-facing-hostname.org" \
-    exoplatform/exo-community
+  -p 8080:8080 \
+  -e EXO_PROXY_VHOST="my.public-facing-hostname.org" \
+  exoplatform/exo-community
 ```
 
 You can also use Docker Compose (see the provided `docker-compose.yml` file as an example).
@@ -184,21 +212,21 @@ You can also use Docker Compose (see the provided `docker-compose.yml` file as a
 
 You have to specify the following environment variables to point to an external MySQL database server (see upper section for more parameters and details) :
 
-```
+```bash
 docker run -d \
-    -p 8080:8080 \
-    -e EXO_DB_TYPE="mysql" \
-    -e EXO_DB_HOST="mysql.server-hostname.org" \
-    -e EXO_DB_USER="exo" \
-    -e EXO_DB_PASSWORD="my-secret-pw" \
-    exoplatform/exo-community
+  -p 8080:8080 \
+  -e EXO_DB_TYPE="mysql" \
+  -e EXO_DB_HOST="mysql.server-hostname.org" \
+  -e EXO_DB_USER="exo" \
+  -e EXO_DB_PASSWORD="my-secret-pw" \
+  exoplatform/exo-community
 ```
 
 You can also use Docker Compose (see the provided `docker-compose.yml` file as an example).
 
 ### see eXo Platform logs
 
-```
+```bash
 docker logs --follow <CONTAINER_NAME>
 ```
 
@@ -206,11 +234,11 @@ docker logs --follow <CONTAINER_NAME>
 
 To install add-ons in the container, provide a commas separated list of add-ons you want to install in a `EXO_ADDONS_LIST` environment variable to the container:
 
-```
+```bash
 docker run -d \
-    -p 8080:8080 \
-    -e EXO_ADDONS_LIST="exo-tasks:1.3.x-SNAPSHOT,exo-answers:1.3.x-SNAPSHOT" \
-    exoplatform/exo-community
+  -p 8080:8080 \
+  -e EXO_ADDONS_LIST="exo-tasks:1.3.x-SNAPSHOT,exo-answers:1.3.x-SNAPSHOT" \
+  exoplatform/exo-community
 ```
 
 INFO: the provided add-ons list will be installed in the container during the container creation.
@@ -219,7 +247,7 @@ INFO: the provided add-ons list will be installed in the container during the co
 
 In a *running container* execute the following command:
 
-```
+```bash
 docker exec <CONTAINER_NAME> /opt/exo/addon list
 ```
 
@@ -227,7 +255,7 @@ docker exec <CONTAINER_NAME> /opt/exo/addon list
 
 In a *running container* execute the following command:
 
-```
+```bash
 docker exec <CONTAINER_NAME> /opt/exo/addon list --installed
 ```
 
@@ -235,14 +263,14 @@ docker exec <CONTAINER_NAME> /opt/exo/addon list --installed
 
 As explained in [eXo Platform documentation](https://www.exoplatform.com/docs/PLF44/PLFAdminGuide.InstallationAndStartup.CustomizingEnvironmentVariables.html) you can customize several aspects of eXo platform by settings environment variables :
 
-```
+```bash
 docker run -d \
-    -p 8080:8080 \
-    -e EXO_JVM_SIZE_MAX="8g" \
-    exoplatform/exo-community
+  -p 8080:8080 \
+  -e EXO_JVM_SIZE_MAX="8g" \
+  exoplatform/exo-community
 ```
 
-# Image build
+## Image build
 
 The simplest way to build this image is to use default values :
 
