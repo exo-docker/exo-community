@@ -1,7 +1,7 @@
 version: '2'
 services:
   web:
-    image: nginx:1.12-alpine
+    image: nginx:1.14-alpine
     expose:
       - "80"
     ports: 
@@ -30,7 +30,7 @@ services:
       - mysql
       - mongo
   mysql:
-    image: mysql:5.6
+    image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: my-super-secret-pw
       MYSQL_DATABASE: exo
