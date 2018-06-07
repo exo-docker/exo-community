@@ -51,6 +51,11 @@ add_in_chat_configuration() {
 # Check configuration variables and add default values when needed
 # -----------------------------------------------------------------------------
 set +u		# DEACTIVATE unbound variable check
+
+# revert Tomcat umask change (before Tomcat 8.5 = 0022 / starting from Tomcat 8.5 = 0027)
+# see https://tomcat.apache.org/tomcat-8.5-doc/changelog.html#Tomcat_8.5.0_(markt)
+[ -z "${EXO_FILE_UMASK}" ] && UMASK="0022" || UMASK="${EXO_FILE_UMASK}" 
+
 [ -z "${EXO_PROXY_VHOST}" ] && EXO_PROXY_VHOST="localhost"
 [ -z "${EXO_PROXY_SSL}" ] && EXO_PROXY_SSL="false"
 [ -z "${EXO_PROXY_PORT}" ] && {
