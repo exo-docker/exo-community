@@ -449,6 +449,10 @@ case "${EXO_DB_TYPE}" in
   mysql)
     echo "Waiting for database ${EXO_DB_TYPE} availability at ${EXO_DB_HOST}:${EXO_DB_PORT} ..."
     /opt/wait-for-it.sh ${EXO_DB_HOST}:${EXO_DB_PORT} -s -t 60
+    if [ $? != 0 ]; then
+      echo "[ERROR] The ${EXO_DB_TYPE} database ${EXO_DB_HOST}:${EXO_DB_PORT} was not available within 60s ! eXo startup aborted ..."
+      exit 1
+    fi
     ;;
 esac
 
@@ -456,12 +460,20 @@ esac
 if [ -f /opt/exo/addons/statuses/exo-chat-community.status ]; then
   echo "Waiting for mongodb availability at ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} ..."
   /opt/wait-for-it.sh ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} -s -t 60
+  if [ $? != 0 ]; then
+    echo "[ERROR] The mongodb database ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} was not available within 60s ! eXo startup aborted ..."
+    exit 1
+  fi
 fi
 
 # Wait for elasticsearch availability (if external)
 if [ "${EXO_ES_EMBEDDED}" != "true" ]; then
   echo "Waiting for external elastic search availability at ${EXO_ES_HOST}:${EXO_ES_PORT} ..."
   /opt/wait-for-it.sh ${EXO_ES_HOST}:${EXO_ES_PORT} -s -t 60
+  if [ $? != 0 ]; then
+    echo "[ERROR] The external elastic search ${EXO_ES_HOST}:${EXO_ES_PORT} was not available within 60s ! eXo startup aborted ..."
+    exit 1
+  fi
 fi
 
 set +u		# DEACTIVATE unbound variable check
