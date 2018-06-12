@@ -69,6 +69,7 @@ set +u		# DEACTIVATE unbound variable check
 [ -z "${EXO_FILE_STORAGE_DIR}" ] && EXO_FILE_STORAGE_DIR="${EXO_DATA_DIR}/files"
 [ -z "${EXO_FILE_STORAGE_RETENTION}" ] && EXO_FILE_STORAGE_RETENTION="30"
 
+[ -z "${EXO_DB_TIMEOUT}" ] && EXO_DB_TIMEOUT="60"
 [ -z "${EXO_DB_TYPE}" ] && EXO_DB_TYPE="hsqldb"
 case "${EXO_DB_TYPE}" in
   hsqldb)
@@ -110,6 +111,7 @@ esac
 
 [ -z "${EXO_ACCESS_LOG_ENABLED}" ] && EXO_ACCESS_LOG_ENABLED="false"
 
+[ -z "${EXO_MONGO_TIMEOUT}" ] && EXO_MONGO_TIMEOUT="60"
 [ -z "${EXO_MONGO_HOST}" ] && EXO_MONGO_HOST="mongo"
 [ -z "${EXO_MONGO_PORT}" ] && EXO_MONGO_PORT="27017"
 [ -z "${EXO_MONGO_USERNAME}" ] && EXO_MONGO_USERNAME="-"
@@ -117,6 +119,7 @@ esac
 [ -z "${EXO_MONGO_DB_NAME}" ] && EXO_MONGO_DB_NAME="chat"
 
 [ -z "${EXO_ES_EMBEDDED}" ] && EXO_ES_EMBEDDED="true"
+[ -z "${EXO_ES_TIMEOUT}" ] && EXO_ES_TIMEOUT="60"
 [ -z "${EXO_ES_EMBEDDED_DATA}" ] && EXO_ES_EMBEDDED_DATA="/srv/exo/es"
 [ -z "${EXO_ES_SCHEME}" ] && EXO_ES_SCHEME="http"
 [ -z "${EXO_ES_HOST}" ] && EXO_ES_HOST="localhost"
@@ -448,20 +451,20 @@ CATALINA_OPTS="${CATALINA_OPTS:-} -Djava.security.egd=file:/dev/./urandom"
 case "${EXO_DB_TYPE}" in
   mysql)
     echo "Waiting for database ${EXO_DB_TYPE} availability at ${EXO_DB_HOST}:${EXO_DB_PORT} ..."
-    /opt/wait-for-it.sh ${EXO_DB_HOST}:${EXO_DB_PORT} -s -t 60
+    /opt/wait-for-it.sh ${EXO_DB_HOST}:${EXO_DB_PORT} -s -t ${EXO_DB_TIMEOUT}
     if [ $? != 0 ]; then
-      echo "[ERROR] The ${EXO_DB_TYPE} database ${EXO_DB_HOST}:${EXO_DB_PORT} was not available within 60s ! eXo startup aborted ..."
+      echo "[ERROR] The ${EXO_DB_TYPE} database ${EXO_DB_HOST}:${EXO_DB_PORT} was not available within ${EXO_DB_TIMEOUT}s ! eXo startup aborted ..."
       exit 1
     fi
     ;;
 esac
 
 # Wait for mongodb availability (if chat is installed)
-if [ -f /opt/exo/addons/statuses/exo-chat-community.status ]; then
+if [ -f /opt/exo/addons/statuses/exo-chat.status ]; then
   echo "Waiting for mongodb availability at ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} ..."
-  /opt/wait-for-it.sh ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} -s -t 60
+  /opt/wait-for-it.sh ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} -s -t ${EXO_MONGO_TIMEOUT}
   if [ $? != 0 ]; then
-    echo "[ERROR] The mongodb database ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} was not available within 60s ! eXo startup aborted ..."
+    echo "[ERROR] The mongodb database ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} was not available within ${EXO_MONGO_TIMEOUT}s ! eXo startup aborted ..."
     exit 1
   fi
 fi
@@ -469,9 +472,9 @@ fi
 # Wait for elasticsearch availability (if external)
 if [ "${EXO_ES_EMBEDDED}" != "true" ]; then
   echo "Waiting for external elastic search availability at ${EXO_ES_HOST}:${EXO_ES_PORT} ..."
-  /opt/wait-for-it.sh ${EXO_ES_HOST}:${EXO_ES_PORT} -s -t 60
+  /opt/wait-for-it.sh ${EXO_ES_HOST}:${EXO_ES_PORT} -s -t ${EXO_ES_TIMEOUT}
   if [ $? != 0 ]; then
-    echo "[ERROR] The external elastic search ${EXO_ES_HOST}:${EXO_ES_PORT} was not available within 60s ! eXo startup aborted ..."
+    echo "[ERROR] The external elastic search ${EXO_ES_HOST}:${EXO_ES_PORT} was not available within ${EXO_ES_TIMEOUT}s ! eXo startup aborted ..."
     exit 1
   fi
 fi

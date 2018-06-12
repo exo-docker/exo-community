@@ -127,6 +127,7 @@ The following environment variables must be passed to the container in order to 
 | EXO_DB_NAME | NO | `exo` | the name of the database / schema to use
 | EXO_DB_USER | NO | `exo` | the username to connect to the database
 | EXO_DB_PASSWORD | YES | - | the password to connect to the database
+| EXO_DB_TIMEOUT | NO | `60` | the number of seconds to wait for database availability before cancelling eXo startup
 
 #### MySQL
 
@@ -145,6 +146,7 @@ The following environment variables should be passed to the container in order t
 | EXO_MONGO_USERNAME | NO | - | the username to use to connect to the mongodb database (no authentification configured by default)
 | EXO_MONGO_PASSWORD | NO | - | the password to use to connect to the mongodb database (no authentification configured by default)
 | EXO_MONGO_DB_NAME | NO | `chat` | the mongodb database name to use for eXo Chat
+| EXO_MONGO_TIMEOUT | NO | `60` | the number of seconds to wait for mongodb availability before cancelling eXo startup
 
 INFO: you must configure and start an external MongoDB server by yourself
 
@@ -163,6 +165,7 @@ The following environment variables should be passed to the container in order t
 | EXO_ES_PASSWORD | NO | - | the password to connect to the elasticsearch server (if authentication is activated on the external elasticsearch).
 | EXO_ES_INDEX_REPLICA_NB | NO | `0` | the number of replicat for elasticsearch indexes (leave 0 if you don't have an elasticsearch cluster).
 | EXO_ES_INDEX_SHARD_NB | NO | `0` | the number of shard for elasticsearch indexes.
+| EXO_ES_TIMEOUT | NO | `60` | the number of seconds to wait for elasticsearch availability before cancelling eXo startup (only if EXO_ES_EMBEDDED=false)
 
 INFO: the default embedded ElasticSearch in not recommended for production purpose.
 
