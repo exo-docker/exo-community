@@ -14,7 +14,7 @@ FROM    exoplatform/base-jdk:jdk8
 LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
 
 # Environment variables
-ENV EXO_VERSION 5.1.0-M09
+ENV EXO_VERSION 5.1.0-RC01
 
 ENV EXO_APP_DIR   /opt/exo
 ENV EXO_CONF_DIR  /etc/exo
@@ -38,12 +38,12 @@ RUN useradd --create-home --user-group --shell /bin/bash ${EXO_USER} \
 
 # Install some useful or needed tools
 RUN apt-get -qq update \
-  && apt-get -qq -y upgrade ${_APT_OPTIONS} \
-  && apt-get -qq -y install ${_APT_OPTIONS} xmlstarlet \
-  && apt-get -qq -y install ${_APT_OPTIONS} libreoffice-calc libreoffice-draw libreoffice-impress libreoffice-math libreoffice-writer \
-  && apt-get -qq -y autoremove \
-  && apt-get -qq -y clean \
-  && rm -rf /var/lib/apt/lists/*
+    && apt-get -qq -y upgrade ${_APT_OPTIONS} \
+    && apt-get -qq -y install ${_APT_OPTIONS} xmlstarlet \
+    && apt-get -qq -y install ${_APT_OPTIONS} libreoffice-calc libreoffice-draw libreoffice-impress libreoffice-math libreoffice-writer \
+    && apt-get -qq -y autoremove \
+    && apt-get -qq -y clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create needed directories
 RUN mkdir -p ${EXO_DATA_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR} \
@@ -64,16 +64,16 @@ ADD scripts/setenv-docker-customize.sh ${EXO_APP_DIR}/bin/setenv-docker-customiz
 RUN chmod 755 ${EXO_APP_DIR}/bin/setenv-docker-customize.sh \
     && chown ${EXO_USER}:${EXO_USER} ${EXO_APP_DIR}/bin/setenv-docker-customize.sh \
     && sed -i '/# Load custom settings/i \
-\# Load custom settings for docker environment\n\
-[ -r "$CATALINA_BASE/bin/setenv-docker-customize.sh" ] && { \n\
-  source $CATALINA_BASE/bin/setenv-docker-customize.sh \n\
-  if [ $? != 0 ]; then \n\
+    \# Load custom settings for docker environment\n\
+    [ -r "$CATALINA_BASE/bin/setenv-docker-customize.sh" ] && { \n\
+    source $CATALINA_BASE/bin/setenv-docker-customize.sh \n\
+    if [ $? != 0 ]; then \n\
     echo "Problem during docker customization process ... startup aborted !" \n\
     exit 1 \n\
-  fi \n\
-} || echo "No Docker eXo Platform customization file : $CATALINA_BASE/bin/setenv-docker-customize.sh"\n\
-' ${EXO_APP_DIR}/bin/setenv.sh \
-  && grep 'setenv-docker-customize.sh' ${EXO_APP_DIR}/bin/setenv.sh
+    fi \n\
+    } || echo "No Docker eXo Platform customization file : $CATALINA_BASE/bin/setenv-docker-customize.sh"\n\
+    ' ${EXO_APP_DIR}/bin/setenv.sh \
+    && grep 'setenv-docker-customize.sh' ${EXO_APP_DIR}/bin/setenv.sh
 
 COPY scripts/wait-for-it.sh /opt/wait-for-it.sh
 RUN chmod 755 /opt/wait-for-it.sh \
