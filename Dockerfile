@@ -14,7 +14,7 @@ FROM    exoplatform/base-jdk:jdk8
 LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
 
 # Environment variables
-ENV EXO_VERSION 5.1.0-RC02
+ENV EXO_VERSION 5.1.0-RC03
 
 ENV EXO_APP_DIR   /opt/exo
 ENV EXO_CONF_DIR  /etc/exo
@@ -26,7 +26,7 @@ ENV EXO_USER exo
 ENV EXO_GROUP ${EXO_USER}
 
 # allow to override the list of addons to package by default
-ARG ADDONS="exo-jdbc-driver-mysql:1.1.0"
+ARG ADDONS="exo-jdbc-driver-mysql:1.2.0"
 
 # Customise system
 RUN rm -f /bin/sh && ln -s /bin/bash /bin/sh
