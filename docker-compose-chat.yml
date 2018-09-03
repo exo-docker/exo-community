@@ -22,7 +22,7 @@ services:
       EXO_DB_USER: exo
       EXO_DB_PASSWORD: my-secret-pw
       EXO_MONGO_HOST: mongo
-      EXO_ADDONS_LIST: exo-chat
+      EXO_ADDONS_LIST: exo-chat:$${CHAT_VERSION}
     volumes:
       - exo_data:/srv/exo
       - exo_logs:/var/log/exo
