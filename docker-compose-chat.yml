@@ -23,6 +23,7 @@ services:
       EXO_DB_PASSWORD: my-secret-pw
       EXO_MONGO_HOST: mongo
       EXO_ADDONS_LIST: exo-chat:$${CHAT_VERSION}
+      EXO_JVM_LOG_GC_ENABLED: "true"
     volumes:
       - exo_data:/srv/exo
       - exo_logs:/var/log/exo

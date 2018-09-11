@@ -102,6 +102,8 @@ esac
 [ -z "${EXO_MAIL_SMTP_USERNAME}" ] && EXO_MAIL_SMTP_USERNAME="-"
 [ -z "${EXO_MAIL_SMTP_PASSWORD}" ] && EXO_MAIL_SMTP_PASSWORD="-"
 
+[ -z "${EXO_JVM_LOG_GC_ENABLED}" ] && EXO_JVM_LOG_GC_ENABLED="false"
+
 [ -z "${EXO_JMX_ENABLED}" ] && EXO_JMX_ENABLED="true"
 [ -z "${EXO_JMX_RMI_REGISTRY_PORT}" ] && EXO_JMX_RMI_REGISTRY_PORT="10001"
 [ -z "${EXO_JMX_RMI_SERVER_PORT}" ] && EXO_JMX_RMI_SERVER_PORT="10002"
@@ -431,6 +433,27 @@ if [ "${EXO_JMX_ENABLED}" = "true" ]; then
     CATALINA_OPTS="${CATALINA_OPTS} -Dcom.sun.management.jmxremote.password.file=/opt/exo/conf/jmxremote.password"
     CATALINA_OPTS="${CATALINA_OPTS} -Dcom.sun.management.jmxremote.access.file=/opt/exo/conf/jmxremote.access"
   fi
+fi
+
+# -----------------------------------------------------------------------------
+# LOG GC configuration
+# -----------------------------------------------------------------------------
+if [ "${EXO_JVM_LOG_GC_ENABLED}" = "true" ]; then
+  # -XX:+PrintGCDateStamps : print the absolute timestamp in the log statement (i.e. “2014-11-18T16:39:25.303-0800”)
+  # -XX:+PrintGCTimeStamps : print the time when the GC event started, relative to the JVM startup time (unit: seconds)
+  # -XX:+PrintGCDetails    : print the details of how much memory is reclaimed in each generation
+  EXO_JVM_LOG_GC_OPTS="-XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps"
+  echo "Enabling eXo JVM GC logs with [${EXO_JVM_LOG_GC_OPTS}] options ..."
+  CATALINA_OPTS="${CATALINA_OPTS} ${EXO_JVM_LOG_GC_OPTS} -Xloggc:${EXO_LOG_DIR}/platform-gc.log"
+  # log rotation to backup previous log file (we don't use GC Log file rotation options because they are not suitable)
+  # create the directory for older GC log file
+  [ ! -d ${EXO_LOG_DIR}/platform-gc/ ] && mkdir ${EXO_LOG_DIR}/platform-gc/
+  if [ -f ${EXO_LOG_DIR}/platform-gc.log ]; then
+    EXO_JVM_LOG_GC_ARCHIVE="${EXO_LOG_DIR}/platform-gc/platform-gc_$(date -u +%F_%H%M%S%z).log"
+    mv ${EXO_LOG_DIR}/platform-gc.log ${EXO_JVM_LOG_GC_ARCHIVE}
+    echo "previous eXo JVM GC log file archived to ${EXO_JVM_LOG_GC_ARCHIVE}."
+  fi
+  echo "eXo JVM GC logs configured and available at ${EXO_LOG_DIR}/platform-gc.log"
 fi
 
 # -----------------------------------------------------------------------------
