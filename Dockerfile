@@ -14,8 +14,8 @@ FROM    exoplatform/base-jdk:jdk8
 LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
 
 # Environment variables
-ENV EXO_VERSION 5.1.0
-ENV CHAT_VERSION 2.1.0
+ENV EXO_VERSION 5.2.0-M01
+ENV CHAT_VERSION 2.2.0-M01
 
 ENV EXO_APP_DIR   /opt/exo
 ENV EXO_CONF_DIR  /etc/exo
