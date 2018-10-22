@@ -83,7 +83,7 @@ RUN chmod 755 /opt/wait-for-it.sh \
 EXPOSE 8080
 USER ${EXO_USER}
 
-WORKDIR "/opt/exo/"
+WORKDIR /opt/exo/
 VOLUME ["/srv/exo"]
 
 RUN for a in ${ADDONS}; do echo "Installing addon $a"; /opt/exo/addon install $a; done
