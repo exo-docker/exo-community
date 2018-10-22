@@ -266,12 +266,21 @@ docker exec <CONTAINER_NAME> /opt/exo/addon list --installed
 
 ### customize some eXo Platform settings
 
-As explained in [eXo Platform documentation](https://www.exoplatform.com/docs/PLF44/PLFAdminGuide.InstallationAndStartup.CustomizingEnvironmentVariables.html) you can customize several aspects of eXo platform by settings environment variables :
+All previously mentioned [environment variables](#configuration-options) can be defined in a standard Docker way with `-e ENV_VARIABLE="value"` parameters :
 
 ```bash
 docker run -d \
   -p 8080:8080 \
   -e EXO_JVM_SIZE_MAX="8g" \
+  exoplatform/exo-community
+```
+
+Some [eXo configuration properties](https://docs.exoplatform.org/PLF50/PLFAdminGuide.Configuration.Properties_reference.html) can also be defined in an `exo.properties` file (starting from exoplatform/exo-community:5.1 version). In this case, just create this file and bind mount it in the Docker container :
+
+```bash
+docker run -d \
+  -p 8080:8080 \
+  -v /absolute/path/to/exo.properties:/etc/exo/exo.properties:ro \
   exoplatform/exo-community
 ```
 
