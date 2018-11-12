@@ -330,7 +330,7 @@ else
   # The number of messages that you can get in the Chat room.
   add_in_chat_configuration "chatReadTotalJson=200"
   # We must override this to remain inside the docker container (works only for embedded chat server)
-  add_in_chat_configuration "chatServerBase=http://localhost:8080"
+  add_in_chat_configuration "chatServerUrl=http://localhost:8080/chatServer"
 
   add_in_chat_configuration "# eXo Chat client configuration"
   # Time interval to refresh messages in a chat.
