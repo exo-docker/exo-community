@@ -40,7 +40,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
   mongo:
-    image: mongo:3.4
+    image: mongo:3.6
     volumes:
       - mongo_data:/data/db:rw
 volumes:
