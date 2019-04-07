@@ -1,7 +1,7 @@
 version: '2'
 services:
   web:
-    image: nginx:1.12-alpine
+    image: nginx:1.14-alpine
     expose:
       - "80"
     ports: 
