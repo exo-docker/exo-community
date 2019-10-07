@@ -23,8 +23,8 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Arguments and environment variables
-ARG EXO_VERSION=5.3.0-RC01
-ARG CHAT_VERSION=2.3.0-RC01
+ARG EXO_VERSION=6.0.0-M01
+ARG CHAT_VERSION=3.0.0-M01
 
 # this allow to specify an eXo Platform download url
 ARG DOWNLOAD_URL
