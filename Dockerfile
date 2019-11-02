@@ -1,17 +1,11 @@
-# Dockerizing base image for eXo Platform with:
-#
-# - Libre Office
-# - eXo Platform Community
+FROM    adoptopenjdk/openjdk8-openj9
 
-# Build:    docker build -t exoplatform/exo-community .
-#
-# Run:      docker run -p 8080:8080 exoplatform/exo-community
-#           docker run -d -p 8080:8080 exoplatform/exo-community
-#           docker run -d --rm -p 8080:8080 -v exo_data:/srv/exo exoplatform/exo-community
-#           docker run -d -p 8080:8080 -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro exoplatform/exo-community
-
-FROM    exoplatform/jdk:8-ubuntu-1804
 LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
+
+ENV TINI_VERSION v0.18.0
+ENV TINI_GPG_KEY 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7
+ENV GOSU_VERSION 1.10
+ENV GOSU_GPG_KEY B42F6819007F00F88E364FD4036A9C25BF357DD4
 
 # Install the needed packages
 RUN apt-get -qq update \
@@ -55,15 +49,51 @@ RUN useradd --create-home --user-group --shell /bin/bash ${EXO_USER}
 RUN mkdir -p ${EXO_DATA_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR} \
     && mkdir -p ${EXO_TMP_DIR} && chown ${EXO_USER}:${EXO_GROUP} ${EXO_TMP_DIR} \
     && mkdir -p ${EXO_LOG_DIR} && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
+RUN apt-get update
+RUN apt-get install wget unzip gnupg2 -y
+
+# Installing Tini
+RUN set -ex \
+    && ( \
+        gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys ${TINI_GPG_KEY} \
+        || gpg2 --keyserver keyserver.pgp.com          --recv-keys ${TINI_GPG_KEY} \
+    )
+
+RUN set -ex \
+    && wget -nv -O /usr/local/bin/tini https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini \
+    && wget -nv -O /usr/local/bin/tini.asc https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc \
+    && gpg --verify /usr/local/bin/tini.asc \
+    && chmod +x /usr/local/bin/tini
+
+# Installing Gosu
+RUN set -ex \
+    && ( \
+        gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys ${GOSU_GPG_KEY} \
+        || gpg2 --keyserver keyserver.pgp.com          --recv-keys ${GOSU_GPG_KEY} \
+    )
+
+# Installing wait-for-it.sh utility
+COPY bin/wait-for-it.sh /usr/local/bin/
+RUN chown root:root /usr/local/bin/wait-for-it.sh \
+    && chmod +x /usr/local/bin/wait-for-it.sh \
+    && ln -s /usr/local/bin/wait-for-it.sh /usr/local/bin/wait-for.sh \
+    && ln -s /usr/local/bin/wait-for-it.sh /usr/local/bin/wait-for
+
+RUN set -ex \
+    && curl -sS -o /usr/local/bin/gosu -L "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
+    && curl -sS -o /usr/local/bin/gosu.asc -L "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
+    && gpg --verify /usr/local/bin/gosu.asc \
+    && rm /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu
 
 # Install eXo Platform
-RUN if [ -n "${DOWNLOAD_USER}" ]; then PARAMS="-u ${DOWNLOAD_USER}"; fi && \
+RUN if [ -n "${DOWNLOAD_USER}" ]; then PARAMS=""; fi && \
   if [ ! -n "${DOWNLOAD_URL}" ]; then \
   echo "Building an image with eXo Platform version : ${EXO_VERSION}"; \
   EXO_VERSION_SHORT=$(echo ${EXO_VERSION} | awk -F "\." '{ print $1"."$2}'); \
   DOWNLOAD_URL="https://downloads.exoplatform.org/public/releases/platform/${EXO_VERSION_SHORT}/${EXO_VERSION}/platform-community-tomcat-${EXO_VERSION}.zip"; \
   fi && \
-  curl ${PARAMS} -sS -L -o /srv/downloads/eXo-Platform-${EXO_VERSION}.zip ${DOWNLOAD_URL} && \
+  curl ${PARAMS} --create-dirs  -sS -L -o /srv/downloads/eXo-Platform-${EXO_VERSION}.zip ${DOWNLOAD_URL} && \
   unzip -q /srv/downloads/eXo-Platform-${EXO_VERSION}.zip -d /srv/downloads/ && \
   rm -f /srv/downloads/eXo-Platform-${EXO_VERSION}.zip && \
   mv /srv/downloads/${ARCHIVE_BASE_DIR} ${EXO_APP_DIR} && \
