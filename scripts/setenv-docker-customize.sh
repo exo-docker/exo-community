@@ -150,6 +150,13 @@ EXO_ES_URL="${EXO_ES_SCHEME}://${EXO_ES_HOST}:${EXO_ES_PORT}"
 
 [ -z "${EXO_JODCONVERTER_PORTS}" ] && EXO_JODCONVERTER_PORTS="2002"
 
+[ -z "${EXO_REWARDS_WALLET_ADMIN_KEY}" ] && EXO_REWARDS_WALLET_ADMIN_KEY="changeThisKey"
+[ -z "${EXO_REWARDS_WALLET_ACCESS_PERMISSION}" ] && EXO_REWARDS_WALLET_ACCESS_PERMISSION="/platform/user"
+[ -z "${EXO_REWARDS_WALLET_NETWORK_ID}" ] && EXO_REWARDS_WALLET_NETWORK_ID="1"
+[ -z "${EXO_REWARDS_WALLET_NETWORK_ENDPOINT_HTTP}" ] && EXO_REWARDS_WALLET_NETWORK_ENDPOINT_HTTP="https://mainnet.infura.io/v3/a1ac85aea9ce4be88e9e87dad7c01d40"
+[ -z "${EXO_REWARDS_WALLET_NETWORK_ENDPOINT_WEBSOCKET}" ] && EXO_REWARDS_WALLET_NETWORK_ENDPOINT_WEBSOCKET="wss://mainnet.infura.io/ws/v3/a1ac85aea9ce4be88e9e87dad7c01d40"
+[ -z "${EXO_REWARDS_WALLET_TOKEN_ADDRESS}" ] && EXO_REWARDS_WALLET_TOKEN_ADDRESS="0xc76987d43b77c45d51653b6eb110b9174acce8fb"
+
 set -u		# REACTIVATE unbound variable check
 
 # -----------------------------------------------------------------------------
@@ -417,6 +424,15 @@ else
   add_in_chat_configuration "chatCronNotifCleanup=0 0/60 * * * ?"
   # When a user reads a chat, the application displays messages of some days in the past.
   add_in_chat_configuration "chatReadDays=30"
+
+  # eXo Rewards
+  add_in_exo_configuration "# Rewards configuration"
+  add_in_exo_configuration "exo.wallet.admin.key=${EXO_REWARDS_WALLET_ADMIN_KEY}"
+  add_in_exo_configuration "exo.wallet.accessPermission=${EXO_REWARDS_WALLET_ACCESS_PERMISSION}"
+  add_in_exo_configuration "exo.wallet.blockchain.networkId=${EXO_REWARDS_WALLET_NETWORK_ID}"
+  add_in_exo_configuration "exo.wallet.blockchain.network.http=${EXO_REWARDS_WALLET_NETWORK_ENDPOINT_HTTP}"
+  add_in_exo_configuration "exo.wallet.blockchain.network.websocket=${EXO_REWARDS_WALLET_NETWORK_ENDPOINT_WEBSOCKET}"
+  add_in_exo_configuration "exo.wallet.blockchain.token.address=${EXO_REWARDS_WALLET_TOKEN_ADDRESS}"
 
   # put a file to avoid doing the configuration twice
   touch /opt/exo/_done.configuration
