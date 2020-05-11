@@ -1,5 +1,11 @@
 # eXo Platform Community Docker image <!-- omit in toc -->
 
+## This image is deprecated and is no longer maintained
+
+## Latest version is available under [Meeds-io/meeds-docker](https://github.com/Meeds-io/meeds-docker)
+
+
+
 ![Docker Stars](https://img.shields.io/docker/stars/exoplatform/exo-community.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/exoplatform/exo-community.svg)
 
 The eXo Platform Community edition Docker image support `HSQLDB` (for testing) and `MySQL` (for production).
@@ -17,6 +23,8 @@ The eXo Platform Community edition Docker image support `HSQLDB` (for testing) a
 | exoplatform/exo-community:4.2     | 7   | 4.2 Community edition |
 | exoplatform/exo-community:4.1     | 7   | 4.1 Community edition |
 
+- [This image is deprecated and is no longer maintained](#this-image-is-deprecated-and-is-no-longer-maintained)
+- [Latest version is available under Meeds-io/meeds-docker](#latest-version-is-available-under-meeds-iomeeds-docker)
 - [Quick start](#quick-start)
 - [Configuration options](#configuration-options)
   - [Add-ons](#add-ons)
