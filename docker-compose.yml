@@ -1,7 +1,7 @@
 version: '2'
 services:
   web:
-    image: nginx:1.14-alpine
+    image: nginx:1.21-alpine
     expose:
       - "80"
     ports: 
@@ -23,13 +23,14 @@ services:
       EXO_DB_PASSWORD: my-secret-pw
       EXO_ADDONS_LIST: 
       EXO_JVM_LOG_GC_ENABLED: "true"
+      EXO_ES_HOST: es
     volumes:
       - exo_data:/srv/exo
       - exo_logs:/var/log/exo
     depends_on:
       - mysql
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: my-super-secret-pw
       MYSQL_DATABASE: exo
@@ -37,6 +38,16 @@ services:
       MYSQL_PASSWORD: my-secret-pw
     volumes:
       - mysql_data:/var/lib/mysql
+  es:
+    image: exoplatform/elasticsearch:2.0.3
+    volumes:
+      - search_data:/usr/share/elasticsearch/data:rw
+    environment:
+      - ES_JAVA_OPTS=-Xms512m -Xmx2048m
+      - node.name=exo
+      - cluster.name=exo
+      - cluster.initial_master_nodes=exo
+      - network.host=_site_      
 volumes:
   exo_data:
   exo_logs:

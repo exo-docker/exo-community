@@ -1,19 +1,13 @@
 # eXo Platform Community Docker image <!-- omit in toc -->
 
-## This image is deprecated and is no longer maintained
-
-## Latest version is available under [Meeds-io/meeds-docker](https://github.com/Meeds-io/meeds-docker)
-
-
-
 ![Docker Stars](https://img.shields.io/docker/stars/exoplatform/exo-community.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/exoplatform/exo-community.svg)
 
 The eXo Platform Community edition Docker image support `HSQLDB` (for testing) and `MySQL` (for production).
 
 | Image                             | JDK | eXo Platform          |
 |-----------------------------------|-----|-----------------------|
-| exoplatform/exo-community:develop | 8   | 5.3 Community edition |
-| exoplatform/exo-community:latest  | 8   | 5.3 Community edition |
+| exoplatform/exo-community:develop | 11  | 6.4 Community edition |
+| exoplatform/exo-community:latest  | 11  | 6.4 Community edition |
 | exoplatform/exo-community:5.3     | 8   | 5.3 Community edition |
 | exoplatform/exo-community:5.2     | 8   | 5.2 Community edition |
 | exoplatform/exo-community:5.1     | 8   | 5.1 Community edition |
@@ -23,8 +17,8 @@ The eXo Platform Community edition Docker image support `HSQLDB` (for testing) a
 | exoplatform/exo-community:4.2     | 7   | 4.2 Community edition |
 | exoplatform/exo-community:4.1     | 7   | 4.1 Community edition |
 
-- [This image is deprecated and is no longer maintained](#this-image-is-deprecated-and-is-no-longer-maintained)
-- [Latest version is available under Meeds-io/meeds-docker](#latest-version-is-available-under-meeds-iomeeds-docker)
+The image is compatible with the following databases system :  `MySQL` (default) / `HSQLDB` / `PostgreSQL`
+
 - [Quick start](#quick-start)
 - [Configuration options](#configuration-options)
   - [Add-ons](#add-ons)
@@ -36,10 +30,14 @@ The eXo Platform Community edition Docker image support `HSQLDB` (for testing) a
     - [MySQL](#mysql)
   - [Mongodb](#mongodb)
   - [ElasticSearch](#elasticsearch)
+  - [LDAP / Active Directory](#ldap--active-directory)
   - [JOD Converter](#jod-converter)
   - [Mail](#mail)
   - [JMX](#jmx)
+  - [Remote Debugging](#remote-debugging)
+  - [Rememberme Token Expiration](#rememberme-token-expiration)
   - [Reward Wallet](#reward-wallet)
+  - [Agenda](#agenda)
 - [How-to](#how-to)
   - [configure eXo Platform behind a reverse-proxy](#configure-exo-platform-behind-a-reverse-proxy)
   - [use MySQL database](#use-mysql-database)
@@ -77,11 +75,13 @@ When ready just go to <http://localhost:8080> and follow the instructions ;-)
 
 Some add-ons are already installed in eXo image but you can install other one or remove some of the pre-installed one :
 
-| VARIABLE               | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                               |
-|------------------------|-----------|---------------|-------------------------------------------------------------------------------------------|
-| EXO_ADDONS_LIST        | NO        | -             | commas separated list of add-ons to install (ex: exo-answers,exo-skype:1.0.x-SNAPSHOT)    |
-| EXO_ADDONS_REMOVE_LIST | NO        | -             | commas separated list of add-ons to uninstall (ex: exo-chat,exo-es-embedded) (since: 5.0) |
-| EXO_ADDONS_CATALOG_URL | NO        | -             | The url of a valid eXo Catalog                                                            |
+| VARIABLE                 | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                                   |
+| ------------------------ | --------- | ------------- | --------------------------------------------------------------------------------------------- |
+| EXO_ADDONS_LIST          | NO        | -             | commas separated list of add-ons to install (ex: exo-answers,exo-skype:1.0.x-SNAPSHOT)        |
+| EXO_ADDONS_REMOVE_LIST   | NO        | -             | commas separated list of add-ons to uninstall (ex: exo-chat) (since: 4.4.2_3) |
+| EXO_ADDONS_CATALOG_URL   | NO        | -             | The url of a valid eXo Catalog                                                                |
+| EXO_ADDONS_CONFLICT_MODE | NO        | -             | decision to make in case of file conflicts (overwrite, ignore or fail)                        |
+| EXO_ADDONS_NOCOMPAT_MODE | NO        | false         | decision to allow to install incompatible addon |                                                  |
 
 ### JVM
 
@@ -118,19 +118,22 @@ The following environment variables can be passed to the container to configure 
 | EXO_HTTP_THREAD_MAX    | NO        | `200`         | maximum number of threads in the tomcat http connector                       |
 | EXO_HTTP_THREAD_MIN    | NO        | `10`          | minimum number of threads ready in the tomcat http connector                 |
 | EXO_ACCESS_LOG_ENABLED | NO        | `false`       | activate Tomcat access log with combine format and a daily log file rotation |
-
+| EXO_GZIP_ENABLED       | NO        | `true`        | activate Tomcat Gzip compression for assets mimetypes          
 #### Data on disk
 
 The following environment variables must be passed to the container in order to work :
 
-| VARIABLE                   | MANDATORY | DEFAULT VALUE                | DESCRIPTION                                                                                  |
-|----------------------------|-----------|------------------------------|----------------------------------------------------------------------------------------------|
-| EXO_DATA_DIR               | NO        | `/srv/exo`                   | the directory to store eXo Platform data                                                     |
-| EXO_JCR_STORAGE_DIR        | NO        | `${EXO_DATA_DIR}/jcr/values` | the directory to store eXo Platform JCR values data                                          |
-| EXO_FILE_STORAGE_DIR       | NO        | `${EXO_DATA_DIR}/files`      | the directory to store eXo Platform data                                                     |
-| EXO_FILE_STORAGE_RETENTION | NO        | `30`                         | the number of days to keep deleted files on disk before definitively remove it from the disk |
-| EXO_UPLOAD_MAX_FILE_SIZE   | NO        | `200`                        | maximum authorized size for file upload in MB.                                               |
-| EXO_FILE_UMASK             | NO        | `0022`                       | the umask used for files generated by eXo                                                    |
+| VARIABLE                   | MANDATORY | DEFAULT VALUE                | DESCRIPTION                                                                                           |
+| -------------------------- | --------- | ---------------------------- | ------------------------------------------------------------------------------------------------------|
+| EXO_DATA_DIR               | NO        | `/srv/exo`                   | the directory to store eXo Platform data                                                              |
+| EXO_JCR_STORAGE_DIR        | NO        | `${EXO_DATA_DIR}/jcr/values` | the directory to store eXo Platform JCR values data                                                   |
+| EXO_JCR_FS_STORAGE_ENABLED | NO        | Default value of eXo Server  | Whether to store JCR Binary files in RDBMS or File system. Possible values: true (=FS) OR false (=DB) |
+| EXO_FILE_STORAGE_DIR       | NO        | `${EXO_DATA_DIR}/files`      | the directory to store eXo Platform data                                                              |
+| EXO_FILE_STORAGE_TYPE      | NO        | Default value of eXo Server  | Whether to store Files API Binary files in RDBMS or File system. Possible values: rdbms OR fs         |
+| EXO_FILE_STORAGE_RETENTION | NO        | `30`                         | the number of days to keep deleted files on disk before definitively remove it from the disk          |
+| EXO_UPLOAD_MAX_FILE_SIZE   | NO        | `200`                        | maximum authorized size for file upload in MB.                                                        |
+| EXO_FILE_UMASK             | NO        | `0022`                       | the umask used for files generated by eXo                                                             |
+                                                  |
 
 ### Database
 
@@ -174,13 +177,10 @@ The following environment variables should be passed to the container in order t
 INFO: you must configure and start an external MongoDB server by yourself
 
 ### ElasticSearch
-
-The following environment variables should be passed to the container in order to configure the search feature on an external Elastic Search server:
+The following environment variables should be passed to the container in order to configure the search feature :
 
 | VARIABLE                | MANDATORY | DEFAULT VALUE  | DESCRIPTION                                                                                                                                                                                                                                                                    |
-|-------------------------|-----------|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| EXO_ES_EMBEDDED         | NO        | `true`         | do we use an elasticsearch server embedded in the eXo Platform JVM or do we use an external one ? (using an embedded elasticsearch server is not recommanded for production purpose) (if set to `false` the add-on `exo-es-embedded` is uninstalled during container creation) |
-| EXO_ES_EMBEDDED_DATA    | NO        | `/srv/exo/es/` | The directory to use for storing elasticsearch data (in embedded mode only).                                                                                                                                                                                                   |
+| ----------------------- | --------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | EXO_ES_SCHEME           | NO        | `http`         | the elasticsearch server scheme to use from the eXo Platform server jvm perspective (http / https).                                                                                                                                                                            |
 | EXO_ES_HOST             | NO        | `localhost`    | the elasticsearch server hostname to use from the eXo Platform server jvm perspective.                                                                                                                                                                                         |
 | EXO_ES_PORT             | NO        | `9200`         | the elasticsearch server port to use from the eXo Platform server jvm perspective.                                                                                                                                                                                             |
@@ -188,9 +188,16 @@ The following environment variables should be passed to the container in order t
 | EXO_ES_PASSWORD         | NO        | -              | the password to connect to the elasticsearch server (if authentication is activated on the external elasticsearch).                                                                                                                                                            |
 | EXO_ES_INDEX_REPLICA_NB | NO        | `0`            | the number of replicat for elasticsearch indexes (leave 0 if you don't have an elasticsearch cluster).                                                                                                                                                                         |
 | EXO_ES_INDEX_SHARD_NB   | NO        | `0`            | the number of shard for elasticsearch indexes.                                                                                                                                                                                                                                 |
-| EXO_ES_TIMEOUT          | NO        | `60`           | the number of seconds to wait for elasticsearch availability before cancelling eXo startup (only if EXO_ES_EMBEDDED=false)                                                                                                                                                     |
+| EXO_ES_TIMEOUT          | NO        | `60`           | the number of seconds to wait for elasticsearch availability before cancelling eXo startup                                                                                        
+### LDAP / Active Directory
 
-INFO: the default embedded ElasticSearch in not recommended for production purpose.
+The following environment variables should be passed to the container in order to configure the ldap connection pool :
+
+| VARIABLE               | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                                                                                  |
+| ---------------------- | --------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| EXO_LDAP_POOL_DEBUG    | NO        | -             | the level of debug output to produce. Valid values are "fine" (trace connection creation and removal) and "all" (all debugging information). |
+| EXO_LDAP_POOL_TIMEOUT  | NO        | `60000`       | the number of milliseconds that an idle connection may remain in the pool without being closed and removed from the pool.                    |
+| EXO_LDAP_POOL_MAX_SIZE | NO        | `100`         | the maximum number of connections per connection identity that can be maintained concurrently.                                               |
 
 ### JOD Converter
 
@@ -212,6 +219,8 @@ The following environment variables should be passed to the container in order t
 | EXO_MAIL_SMTP_STARTTLS | NO        | `false`                   | true to enable the secure (TLS) SMTP. See RFC 3207. |
 | EXO_MAIL_SMTP_USERNAME | NO        | -                         | authentication username for smtp server (if needed) |
 | EXO_MAIL_SMTP_PASSWORD | NO        | -                         | authentication password for smtp server (if needed) |
+| EXO_SMTP_SSL_PROTOCOLS | NO        | -                         | tls version for smtp server (if needed) |
+
 
 ### JMX
 
@@ -228,18 +237,50 @@ The following environment variables should be passed to the container in order t
 
 With the default parameters you can connect to JMX with `service:jmx:rmi://localhost:10002/jndi/rmi://localhost:10001/jmxrmi` without authentication.
 
+### Remote Debugging
+
+The following environment variables should be passed to the container in order to enable remote debugging mode :
+
+| VARIABLE                    | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                                                                               |
+| --------------------------- | --------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| EXO_DEBUG_ENABLED           | NO        | `false`       | enable remote debugging listener                                                                                                                     |
+| EXO_DEBUG_PORT              | NO        | `8000`        | Remote debugging port
+
+### Rememberme Token Expiration
+
+The following environment variables should be passed to the container in order to specify rememberme token expiration :
+
+| VARIABLE                                        | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                                                                               |
+| ------------------------------------------------| --------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| EXO_TOKEN_REMEMBERME_EXPIRATION_VALUE           | NO        | `7`          | Number of unit expiration delay                                                                                                                     |
+| EXO_TOKEN_REMEMBERME_EXPIRATION_UNIT            | NO        | `DAY`        | Unit of token expiration `DAY`, `HOUR`, `MINUTE`, `SECOND`
+
 ### Reward Wallet
 
 The following environment variables should be passed to the container in order to configure eXo Rewards wallet:
 
 | VARIABLE                                      | MANDATORY | DEFAULT VALUE                                                    | DESCRIPTION                                                                                                                                                                                                                       |
 |-----------------------------------------------|-----------|------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| EXO_REWARDS_WALLET_ADMIN_KEY                  | YES       | `changeThisKey`                                                  | password used to encrypt the Admin wallet’s private key stored in database. If its value is modified after server startup, the private key of admin wallet won’t be decrypted anymore, preventing all administrative operations |
+| EXO_REWARDS_WALLET_ADMIN_KEY                  | YES       | `changeThisKey`                                                  | password used to encrypt the Admin wallet’s private key stored in database. If its value is modified after server startup, the private key of admin wallet won’t be decrypted anymore, preventing all administrative operations   |
+| EXO_REWARDS_WALLET_ADMIN_PRIVATE_KEY                  | NO       |                                                  | Admin wallet's private key. When set, it allows to apply an existant admin wallet in the new created instance |
 | EXO_REWARDS_WALLET_ACCESS_PERMISSION          | NO        | `/platform/users`                                                | to restrict access to wallet application to a group of users (ex: member:/spaces/internal_space)                                                                                                                                  |
 | EXO_REWARDS_WALLET_NETWORK_ID                 | NO        | `1` (mainnet)                                                    | ID of the Ethereum network to use (see: <https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md#list-of-chain-ids>)                                                                                                         |
 | EXO_REWARDS_WALLET_NETWORK_ENDPOINT_HTTP      | NO        | `https://mainnet.infura.io/v3/a1ac85aea9ce4be88e9e87dad7c01d40`  | https url to access to the Ethereum API for the chosen network id                                                                                                                                                                 |
 | EXO_REWARDS_WALLET_NETWORK_ENDPOINT_WEBSOCKET | NO        | `wss://mainnet.infura.io/ws/v3/a1ac85aea9ce4be88e9e87dad7c01d40` | wss url to access to the Ethereum API for the chosen network id                                                                                                                                                                   |
-| EXO_REWARDS_WALLET_TOKEN_ADDRESS              | NO        | `0xc76987d43b77c45d51653b6eb110b9174acce8fb`                     | address of the contract for the official rewarding token promoted by eXo                                                                                                                                                          |                                                                                                  |
+| EXO_REWARDS_WALLET_TOKEN_ADDRESS              | NO        | `0xc76987d43b77c45d51653b6eb110b9174acce8fb`                     | address of the contract for the official rewarding token promoted by eXo                                                                                                                                                         | 
+| EXO_REWARDS_WALLET_NETWORK_CRYPTOCURRENCY              | NO        |                     | When not set, the cryptocurrency is got from the contract   |
+| EXO_REWARDS_WALLET_TOKEN_SYMBOL              | NO        |                     | When not set, the token's symbol is got from the contract   |
+                                                                                                 |
+### Agenda
+
+The following environment variables should be passed to the container in order to configure eXo Agenda remote connectors:
+
+| VARIABLE                                      | MANDATORY | DEFAULT VALUE  | DESCRIPTION                                                                                                                                                                                                                                                                                                                              |
+|-----------------------------------------------|-----------|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| EXO_AGENDA_GOOGLE_CONNECTOR_ENABLED           | NO        | `true`         | Whether to enable or not users to connect their personal Agenda to eXo Agenda or not.                                                                                                                                                                                                                                                    |
+| EXO_AGENDA_GOOGLE_CONNECTOR_CLIENT_API_KEY    | NO        |                | This Client API key has to be provided when turning `on` Google Remote Connector for users. In fact, the users requests to google account will use this key to be able to retrieve information from their account. ( See https://developers.google.com/calendar/auth )                                                                   |
+| EXO_AGENDA_OFFICE_CONNECTOR_ENABLED           | NO        | `true`         | Whether to enable or not users to connect their personal Agenda to eXo Agenda or not.                                                                                                                                                                                                                                                    |
+| EXO_AGENDA_OFFICE_CONNECTOR_CLIENT_API_KEY    | NO        |                | This Client API key has to be provided when turning `on` Office Remote Connector for users. In fact, the users requests to Office 365 Outlook account will use this key to be able to retrieve information from their account. ( See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow ) |
 
 ## How-to
 
@@ -285,7 +326,7 @@ To install add-ons in the container, provide a commas separated list of add-ons 
 ```bash
 docker run -d \
   -p 8080:8080 \
-  -e EXO_ADDONS_LIST="exo-tasks:1.3.x-SNAPSHOT,exo-answers:1.3.x-SNAPSHOT" \
+  -e EXO_ADDONS_LIST="exo-tasks:3.4.x-SNAPSHOT" \
   exoplatform/exo-community
 ```
 
