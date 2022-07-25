@@ -511,7 +511,7 @@ if [ "${EXO_JMX_ENABLED}" = "true" ]; then
   fi
 
   # The notifications are cleaned up every one hour by default.
-  add_in_chat_configuration "chatCronNotifCleanup=0 0/60 * * * ?"
+  add_in_chat_configuration "chatCronNotifCleanup=0 0 * * * ?"
   # When a user reads a chat, the application displays messages of some days in the past.
   add_in_chat_configuration "chatReadDays=30"
 
