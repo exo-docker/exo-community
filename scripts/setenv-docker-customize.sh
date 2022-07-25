@@ -731,13 +731,12 @@ if [ -f /opt/exo/addons/statuses/exo-chat.status ]; then
 fi
 
 # Wait for elasticsearch availability (if external)
-if [ "${EXO_ES_EMBEDDED}" != "true" ]; then
-  echo "Waiting for external elastic search availability at ${EXO_ES_HOST}:${EXO_ES_PORT} ..."
-  wait-for ${EXO_ES_HOST}:${EXO_ES_PORT} -s -t ${EXO_ES_TIMEOUT}
-  if [ $? != 0 ]; then
-    echo "[ERROR] The external elastic search ${EXO_ES_HOST}:${EXO_ES_PORT} was not available within ${EXO_ES_TIMEOUT}s ! eXo startup aborted ..."
-    exit 1
-  fi
+echo "Waiting for external elastic search availability at ${EXO_ES_HOST}:${EXO_ES_PORT} ..."
+wait-for ${EXO_ES_HOST}:${EXO_ES_PORT} -s -t ${EXO_ES_TIMEOUT}
+if [ $? != 0 ]; then
+  echo "[ERROR] The external elastic search ${EXO_ES_HOST}:${EXO_ES_PORT} was not available within ${EXO_ES_TIMEOUT}s ! eXo startup aborted ..."
+  exit 1
 fi
+
 
 set +u		# DEACTIVATE unbound variable check
