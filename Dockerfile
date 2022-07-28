@@ -42,7 +42,7 @@ ARG DOWNLOAD_USER
 # allow to override the list of addons to package by default
 ARG ADDONS="exo-jdbc-driver-mysql:2.0.3 exo-jdbc-driver-postgresql:2.0.0"
 # Default base directory on the plf archive
-ARG ARCHIVE_BASE_DIR=exo-platform-community-${EXO_VERSION}
+ARG ARCHIVE_BASE_DIR=platform-community-${EXO_VERSION}
 
 ENV EXO_APP_DIR   /opt/exo
 ENV EXO_CONF_DIR  /etc/exo
