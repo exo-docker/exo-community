@@ -27,13 +27,8 @@ services:
       EXO_MONGO_HOST: mongo
       EXO_MONGO_PORT: 27017
       EXO_MONGO_DB_NAME: chat
-      EXO_DEBUG_ENABLED: "true"
-    expose:
-      - "8080"
-      - "8000"
     ports:
       - "8080:8080"
-      - "8000:8000"
     volumes:
       - exo_data:/srv/exo
       - exo_logs:/var/log/exo
@@ -58,7 +53,6 @@ services:
       - cluster.name=exo
       - cluster.initial_master_nodes=exo
       - network.host=_site_
-
   mongo:
     image: mongo:4.4
     container_name: mongo
@@ -66,9 +60,6 @@ services:
       - "127.0.0.1:27017:27017"
     volumes:
       - mongo_data:/data/db:rw
-    restart: unless-stopped
-
-
 volumes:
   exo_data:
   exo_logs:
