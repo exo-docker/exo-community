@@ -61,14 +61,20 @@ Running the eXo Platform Community edition container requires additional compone
 
 These components are not provided within the docker image exoplatform/exo-community.
 
-In order to run all components at once, we provide a Docker Compose file and 
-a [quick start guide](https://docs.exoplatform.org/en/latest/GettingStartedeXoCommunity.html). It will allow
-you to start all components required to get up and running easily with the default configuration.
+In order to run all components at once, we provide a Docker Compose file and
+a [quick start guide](https://docs.exoplatform.org/en/latest/GettingStartedeXoCommunity.html). It will allow you to start all
+components required to get up and running easily with the default configuration.
 
 ### Advanced way : with docker images
 
-If you prefer, you can run separatly each components by starting their own docker image. Then you have to use properties describe
-in this document to configure eXo Community docker image.
+Alternatively, you may want to run each component separately with containers. Required images are :
+
+- [Mongo](https://hub.docker.com/_/mongo) 4.4
+- [eXo Platform Elastic Search](https://hub.docker.com/r/exoplatform/elasticsearch) 2.0.3. This image is build by eXo with all
+  needed ES addons
+- [eXo Platform Community](https://hub.docker.com/r/exoplatform/exo-community) 6.3
+
+To do this, you can use properties described in this document to configure eXo Community docker image.
 
 The prerequisites are :
 
