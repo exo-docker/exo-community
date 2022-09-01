@@ -19,6 +19,8 @@ The eXo Platform Community edition Docker image support `HSQLDB` (for testing) a
 The image is compatible with the following databases system :  `MySQL` (default) / `HSQLDB` / `PostgreSQL`
 
 - [Quick start](#quick-start)
+  - [Easy way](#easy-way--with-docker-compose)
+  - [Advanced way](#advanced-way--with-docker-images)
 - [Configuration options](#configuration-options)
   - [Add-ons](#add-ons)
   - [JVM](#jvm)
@@ -49,6 +51,25 @@ The image is compatible with the following databases system :  `MySQL` (default)
 
 ## Quick start
 
+### Easy way : with docker-compose
+
+eXo Platform Community edition is based on sub-components :
+
+- Database (mysql or psql)
+- Elastic Search
+- Mongodb
+
+Theses sub-components are not provided in the docker image exoplatform/exo-community.
+
+If you want to run all components in one action, we provide
+a [guide](https://docs.exoplatform.org/en/latest/GettingStartedeXoCommunity.html) based on a docker-compose file. This will allow
+you to start all components needed by the platform.
+
+### Advanced way : with docker images
+
+If you prefer, you can run separatly each components by starting their own docker image. Then you have to use properties describe
+in this document to configure eXo Community docker image.
+
 The prerequisites are :
 
 - Docker daemon version 12+ + internet access
@@ -57,7 +78,10 @@ The prerequisites are :
 The most basic way to start eXo Platform Community edition for *evaluation* purpose is to execute
 
 ```bash
-docker run -v exo_data:/srv/exo -p 8080:8080 exoplatform/exo-community
+docker network create -d bridge exo-network
+docker run -v mongo_data:/data/db -p 27017:27017 --name mongo --network=exo-network mongo:4.4
+docker run -e ES_JAVA_OPTS="-Xms2048m -Xmx2048m" -e node.name=exo -e cluster.name=exo -e cluster.initial_master_nodes=exo -e network.host=_site_ -v search_data:/usr/share/elasticsearch/data --name es --network=exo-network exoplatform/elasticsearch:2.0.3
+docker run -v exo_data:/srv/exo -p 8080:8080 -e EXO_ES_HOST=es --name exo --network=exo-network exoplatform/exo-community:6.3
 ```
 
 and then waiting the log line which say that the server is started
