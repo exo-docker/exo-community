@@ -53,17 +53,17 @@ The image is compatible with the following databases system :  `MySQL` (default)
 
 ### Easy way : with docker-compose
 
-eXo Platform Community edition is based on sub-components :
+Running the eXo Platform Community edition container requires additional components to run  :
 
 - Database (mysql or psql)
 - Elastic Search
 - Mongodb
 
-Theses sub-components are not provided in the docker image exoplatform/exo-community.
+These components are not provided within the docker image exoplatform/exo-community.
 
-If you want to run all components in one action, we provide
-a [guide](https://docs.exoplatform.org/en/latest/GettingStartedeXoCommunity.html) based on a docker-compose file. This will allow
-you to start all components needed by the platform.
+In order to run all components at once, we provide a Docker Compose file and 
+a [quick start guide](https://docs.exoplatform.org/en/latest/GettingStartedeXoCommunity.html). It will allow
+you to start all components required to get up and running easily with the default configuration.
 
 ### Advanced way : with docker images
 
