@@ -98,6 +98,12 @@ and then waiting the log line which say that the server is started
 
 When ready just go to <http://localhost:8080> and follow the instructions ;-)
 
+Once containers successfully start, you can stop/start them with
+```bash
+docker stop $CONTAINER_NAME
+docker start $CONTAINER_NAME
+```bash
+
 ## Configuration options
 
 ### Add-ons
