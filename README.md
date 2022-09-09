@@ -102,7 +102,7 @@ Once containers successfully start, you can stop/start them with
 ```bash
 docker stop $CONTAINER_NAME
 docker start $CONTAINER_NAME
-```bash
+```
 
 ## Configuration options
 
