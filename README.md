@@ -19,6 +19,8 @@ The eXo Platform Community edition Docker image support `HSQLDB` (for testing) a
 The image is compatible with the following databases system :  `MySQL` (default) / `HSQLDB` / `PostgreSQL`
 
 - [Quick start](#quick-start)
+  - [Easy way](#easy-way--with-docker-compose)
+  - [Advanced way](#advanced-way--with-docker-images)
 - [Configuration options](#configuration-options)
   - [Add-ons](#add-ons)
   - [JVM](#jvm)
@@ -49,6 +51,31 @@ The image is compatible with the following databases system :  `MySQL` (default)
 
 ## Quick start
 
+### Easy way : with docker-compose
+
+Running the eXo Platform Community edition container requires additional components to run  :
+
+- Database (mysql or psql)
+- Elastic Search
+- Mongodb
+
+These components are not provided within the docker image exoplatform/exo-community.
+
+In order to run all components at once, we provide a Docker Compose file and
+a [quick start guide](https://docs.exoplatform.org/en/latest/GettingStartedeXoCommunity.html). It will allow you to start all
+components required to get up and running easily with the default configuration.
+
+### Advanced way : with docker images
+
+Alternatively, you may want to run each component separately with containers. Required images are :
+
+- [Mongo](https://hub.docker.com/_/mongo) 4.4
+- [eXo Platform Elastic Search](https://hub.docker.com/r/exoplatform/elasticsearch) 2.0.3. This image is build by eXo with all
+  needed ES addons
+- [eXo Platform Community](https://hub.docker.com/r/exoplatform/exo-community) 6.3
+
+To do this, you can use properties described in this document to configure eXo Community docker image.
+
 The prerequisites are :
 
 - Docker daemon version 12+ + internet access
@@ -57,7 +84,10 @@ The prerequisites are :
 The most basic way to start eXo Platform Community edition for *evaluation* purpose is to execute
 
 ```bash
-docker run -v exo_data:/srv/exo -p 8080:8080 exoplatform/exo-community
+docker network create -d bridge exo-network
+docker run -v mongo_data:/data/db -p 27017:27017 --name mongo --network=exo-network mongo:4.4
+docker run -e ES_JAVA_OPTS="-Xms2048m -Xmx2048m" -e node.name=exo -e cluster.name=exo -e cluster.initial_master_nodes=exo -e network.host=_site_ -v search_data:/usr/share/elasticsearch/data --name es --network=exo-network exoplatform/elasticsearch:2.0.3
+docker run -v exo_data:/srv/exo -p 8080:8080 -e EXO_ES_HOST=es --name exo --network=exo-network exoplatform/exo-community:6.3
 ```
 
 and then waiting the log line which say that the server is started
@@ -67,6 +97,12 @@ and then waiting the log line which say that the server is started
 ```
 
 When ready just go to <http://localhost:8080> and follow the instructions ;-)
+
+Once containers successfully start, you can stop/start them with
+```bash
+docker stop $CONTAINER_NAME
+docker start $CONTAINER_NAME
+```
 
 ## Configuration options
 
