@@ -1,0 +1,13 @@
+name: eXo PR Task Webhook
+
+on:
+  pull_request:
+    types: [opened, reopened, closed, review_requested]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  check_tasks:
+    name: Check for eXo tasks identifiers
+    uses: exoplatform/swf-scripts/.github/workflows/ghawebhooktasks.yml@master
+    secrets: inherit
