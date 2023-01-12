@@ -48,6 +48,7 @@ The image is compatible with the following databases system :  `MySQL` (default)
   - [list eXo Platform add-ons installed](#list-exo-platform-add-ons-installed)
   - [customize some eXo Platform settings](#customize-some-exo-platform-settings)
 - [Image build](#image-build)
+- [Image signature](#image-signature)
 
 ## Quick start
 
@@ -416,3 +417,33 @@ The build can be customized with the following arguments :
 | ARGUMENT NAME | MANDATORY | DEFAULT VALUE                                          | DESCRIPTION                                                                         |
 |---------------|-----------|--------------------------------------------------------|-------------------------------------------------------------------------------------|
 | ADDONS        | NO        | `exo-chat exo-tasks:1.1.0 exo-jdbc-driver-mysql:1.1.0` | a space separated list of add-ons to install (default: exo-jdbc-driver-mysql:1.1.0) |
+
+## Image Signature
+
+:octocat: ghcr.io Docker image signature
+========================================
+
+Starting with eXo Community `6.3` from the github container registry, eXo Community docker images will be signed with [cosign] (https://github.com/sigstore/cosign) tool.
+
+In order to verify the signature of the eXo Community docker image, please install the "cosign" command line tool. Then please follow these instructions:
+
+- Save the following public key to `cosign.pub` file:
+```gpg
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEgYKR7SoWbXjHya1Bc2Ih3kX8wv8w
+Y7StaVsRXzbcIL0jECiKzKarPxQQ69uVmZ6c0JEVQhBeN9w3pr75D4o2/A==
+-----END PUBLIC KEY-----
+```
+- Execute the following command:
+```bash
+cosign verify --key cosign.pub ghcr.io/exo-docker/exo-community:<tag>
+```
+*Example:*
+```bash
+cosign verify --key cosign.pub ghcr.io/exo-docker/exo-community:6.3
+```
+  Output:
+```json
+[{"critical":{"identity":{"docker-reference":"ghcr.io/exo-docker/exo-community"},"image":{"docker-manifest-digest":"sha256:cb490a56d23b940fc166329dbf243dc73d2651c8a64399413e1c23e14284f6a3"},"type":"cosign container image signature"},"optional":null}]
+
+```
