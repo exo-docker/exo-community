@@ -64,7 +64,7 @@ Running the eXo Platform Community edition container requires additional compone
 These components are not provided within the docker image exoplatform/exo-community.
 
 In order to run all components at once, we provide a Docker Compose file and
-a [quick start guide](https://docs.exoplatform.org/en/latest/GettingStartedeXoCommunity.html). It will allow you to start all
+a [quick start guide](https://docs.exoplatform.org/guide/getting-started/start-community.html#start-exo-platform). It will allow you to start all
 components required to get up and running easily with the default configuration.
 
 ### Advanced way : with docker images
@@ -396,7 +396,7 @@ docker run -d \
   exoplatform/exo-community
 ```
 
-Some [eXo configuration properties](https://docs.exoplatform.org/PLF50/PLFAdminGuide.Configuration.Properties_reference.html) can also be defined in an `exo.properties` file (starting from exoplatform/exo-community:5.1 version). In this case, just create this file and bind mount it in the Docker container :
+Some [eXo configuration properties](https://docs.exoplatform.org/administration/configuration.html) can also be defined in an `exo.properties` file (starting from exoplatform/exo-community:5.1 version). In this case, just create this file and bind mount it in the Docker container :
 
 ```bash
 docker run -d \
