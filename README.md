@@ -188,10 +188,9 @@ cosign verify --key cosign.pub ghcr.io/exo-docker/exo-community:<tag>
 ```
 *Example:*
 ```bash
-cosign verify --key cosign.pub ghcr.io/exo-docker/exo-community:6.3
+cosign verify --key cosign.pub ghcr.io/exo-docker/exo-community:6.4
 ```
   Output:
 ```json
-[{"critical":{"identity":{"docker-reference":"ghcr.io/exo-docker/exo-community"},"image":{"docker-manifest-digest":"sha256:cb490a56d23b940fc166329dbf243dc73d2651c8a64399413e1c23e14284f6a3"},"type":"cosign container image signature"},"optional":null}]
-
+[{"critical":{"identity":{"docker-reference":"ghcr.io/exo-docker/exo-community"},"image":{"docker-manifest-digest":"sha256:906afd0b16900e9ba...."},"type":"cosign container image signature"},"optional":{"Bundle":{"SignedEntryTimestamp":"MEQCIGtU3...","Payload":{"body":"eyJhcGlWZX....","integratedTime":1689844562,"logIndex":28114552,"logID":"c0d23d6..."}}}}]
 ```
