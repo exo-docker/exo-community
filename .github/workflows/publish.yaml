@@ -32,9 +32,10 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.GHCR_IMAGE_NAME }}
           flavor: |
             latest=false
-
+            
       - name: Build and push Docker image to ghcr.io
         uses: docker/build-push-action@v4
+        id: pushghcr
         with:
           context: .
           push: true
@@ -53,5 +54,5 @@ jobs:
         run: cosign sign --yes --key cosign.key "${TAGS}@${DIGEST}"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          DIGEST: ${{ steps.metaghcr.outputs.digest }}
+          DIGEST: ${{ steps.pushghcr.outputs.digest }}
           TAGS: ${{ steps.metaghcr.outputs.tags }}
