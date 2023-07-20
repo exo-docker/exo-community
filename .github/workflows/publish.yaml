@@ -50,6 +50,8 @@ jobs:
           KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
       
       - name: Sign the published ghcr.io Docker image
-        run: cosign sign --key cosign.key ${{ steps.metaghcr.outputs.tags }}
+        run: cosign sign --yes --key cosign.key "${TAGS}@${DIGEST}"
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.metaghcr.outputs.digest }}
+          TAGS: ${{ steps.metaghcr.outputs.tags }}
