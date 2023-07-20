@@ -1,0 +1,55 @@
+name: Create and publish a Docker image
+
+on:
+  push:
+    branches: '[6-9].[0-9]'
+env:
+  REGISTRY: ghcr.io
+  GHCR_IMAGE_NAME: 'exo-docker/exo-community'
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.SWF_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: metaghcr
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.GHCR_IMAGE_NAME }}
+          flavor: |
+            latest=false
+
+      - name: Build and push Docker image to ghcr.io
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metaghcr.outputs.tags }}
+          labels: ${{ steps.metaghcr.outputs.labels }}
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.1.1
+        
+      - name: Write signing key to disk
+        run: 'echo "$KEY" > cosign.key'
+        env:
+          KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+      
+      - name: Sign the published ghcr.io Docker image
+        run: cosign sign --key cosign.key ${{ steps.metaghcr.outputs.tags }}
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
