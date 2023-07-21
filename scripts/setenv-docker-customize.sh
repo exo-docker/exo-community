@@ -593,15 +593,21 @@ else
     _ADDON_MGR_OPTIONS="${_ADDON_MGR_OPTIONS:-} --no-compat"
   fi
 
-  # add-on installation 
+  # add-on installation
   if [ -z "${EXO_ADDONS_LIST:-}" ]; then
     echo "# no add-on to install from EXO_ADDONS_LIST environment variable."
   else
     echo "# installing add-ons from EXO_ADDONS_LIST environment variable:"
+    _ADDON_COUNTER=0
     echo ${EXO_ADDONS_LIST} | tr ',' '\n' | while read _addon ; do
       if [ -n "${_addon}" ]; then
+        _ADDON_COUNTER=$((_ADDON_COUNTER+1))
         # Install addon
-        ${EXO_APP_DIR}/addon install ${_ADDON_MGR_OPTIONS:-} ${_ADDON_MGR_OPTION_CATALOG:-} ${_addon} --force --batch-mode
+        if [ ${_ADDON_COUNTER} -eq "1" ]; then 
+          ${EXO_APP_DIR}/addon install ${_ADDON_MGR_OPTIONS:-} ${_ADDON_MGR_OPTION_CATALOG:-} ${_addon} --force --batch-mode --no-cache
+        else
+          ${EXO_APP_DIR}/addon install ${_ADDON_MGR_OPTIONS:-} ${_ADDON_MGR_OPTION_CATALOG:-} ${_addon} --force --batch-mode
+        fi
         if [ $? != 0 ]; then
           echo "[ERROR] Problem during add-on [${_addon}] install."
           exit 1
