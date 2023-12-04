@@ -128,14 +128,6 @@ The following environment variables should be passed to the container in order t
 | EXO_LDAP_POOL_TIMEOUT  | NO        | `60000`       | the number of milliseconds that an idle connection may remain in the pool without being closed and removed from the pool.                    |
 | EXO_LDAP_POOL_MAX_SIZE | NO        | `100`         | the maximum number of connections per connection identity that can be maintained concurrently.                                               |
 
-### JOD Converter
-
-The following environment variables should be passed to the container in order to configure jodconverter :
-
-| VARIABLE               | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                               |
-|------------------------|-----------|---------------|-------------------------------------------------------------------------------------------|
-| EXO_JODCONVERTER_PORTS | NO        | `2002`        | comma separated list of ports to allocate to JOD Converter processes (ex: 2002,2003,2004) |
-
 ### Mail
 
 The following environment variables should be passed to the container in order to configure the mail server configuration to use :
