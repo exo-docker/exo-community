@@ -1,7 +1,7 @@
 version: '2.3'
 services:
   web:
-    image: exoplatform/nginx:1.21.0
+    image: exoplatform/nginx:1.24.0
     expose:
       - "80"
     ports:
@@ -11,7 +11,7 @@ services:
     links:
       - exo
   exo:
-    image: exoplatform/exo-community:6.4
+    image: exoplatform/exo-community:6.5
     environment:
       EXO_PROXY_VHOST: localhost
       EXO_PROXY_PORT: 80
@@ -35,7 +35,7 @@ services:
     depends_on:
       - mysql
   mysql:
-    image: mysql:8.0.31
+    image: mysql:8.0.33
     environment:
       MYSQL_ROOT_PASSWORD: my-super-secret-pw
       MYSQL_DATABASE: exo
@@ -44,7 +44,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
   es:
-    image: exoplatform/elasticsearch:2.0.4
+    image: exoplatform/elasticsearch:2.1.0
     volumes:
       - search_data:/usr/share/elasticsearch/data:rw
     environment:
@@ -54,7 +54,7 @@ services:
       - cluster.initial_master_nodes=exo
       - network.host=_site_
   mongo:
-    image: mongo:4.4
+    image: mongo:6.0
     container_name: mongo
     ports:
       - "127.0.0.1:27017:27017"
