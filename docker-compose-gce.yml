@@ -1,0 +1,51 @@
+version: '2'
+services:
+  exo:
+    image: exoplatform/exo-community:6.5
+    environment:
+      EXO_DB_NAME: exo
+      EXO_DB_USER: exo
+      EXO_DB_PASSWORD: my-secret-pw
+      EXO_DB_TYPE: hsqldb
+      EXO_ADDONS_LIST:
+      EXO_ADDONS_REMOVE_LIST: "exo-onlyoffice,exo-jitsi"
+      EXO_JVM_LOG_GC_ENABLED: "true"
+      EXO_ES_SCHEME: http
+      EXO_ES_HOST: es
+      EXO_ES_PORT: 9200
+      EXO_MONGO_HOST: mongo
+      EXO_MONGO_PORT: 27017
+      EXO_MONGO_DB_NAME: chat
+    volumes:
+      - exo_data:/srv/exo
+      - exo_logs:/var/log/exo
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+      - es
+  es:
+    image: exoplatform/elasticsearch:2.1.0
+    volumes:
+      - search_data:/usr/share/elasticsearch/data:rw
+    environment:
+      - ES_JAVA_OPTS=-Xms2048m -Xmx2048m
+      - node.name=exo
+      - cluster.name=exo
+      - cluster.initial_master_nodes=exo
+      - network.host=_site_   
+      - xpack.security.enabled=false
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo_data:/data/db:rw
+volumes:
+  exo_data:
+  exo_logs:
+  search_data:
+  mongo_data:

@@ -2,6 +2,9 @@
 
 ![Docker Stars](https://img.shields.io/docker/stars/exoplatform/exo-community.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/exoplatform/exo-community.svg)
 
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fexo-docker%2Fexo-community&cloudshell_git_branch=gce&cloudshell_tutorial=gce.md)
+
+
 The eXo Platform Community edition Docker image support `HSQLDB` (for testing) and `MySQL` (for production).
 
 | Image                             | JDK | eXo Platform          |
