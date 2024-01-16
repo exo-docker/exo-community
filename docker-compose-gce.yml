@@ -35,6 +35,7 @@ services:
       - node.name=exo
       - cluster.name=exo
       - cluster.initial_master_nodes=exo
+      - http.max_content_length=201mb
       - network.host=_site_   
       - xpack.security.enabled=false
   mongo:
