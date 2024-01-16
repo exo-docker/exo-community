@@ -9,14 +9,11 @@ services:
       EXO_DB_PASSWORD: my-secret-pw
       EXO_DB_TYPE: hsqldb
       EXO_ADDONS_LIST:
-      EXO_ADDONS_REMOVE_LIST: "exo-onlyoffice,exo-jitsi"
+      EXO_ADDONS_REMOVE_LIST: "exo-chat,exo-onlyoffice,exo-jitsi,exo-web-conferencing,exo-data-upgrade,meeds-wallet,meeds-perk-store"
       EXO_JVM_LOG_GC_ENABLED: "true"
       EXO_ES_SCHEME: http
       EXO_ES_HOST: es
       EXO_ES_PORT: 9200
-      EXO_MONGO_HOST: mongo
-      EXO_MONGO_PORT: 27017
-      EXO_MONGO_DB_NAME: chat
       EXO_JVM_SIZE_MAX: 4g
       EXO_JVM_SIZE_MIN: 2g
     volumes:
@@ -27,7 +24,6 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mongo
       - es
   es:
     image: exoplatform/elasticsearch:2.1.0
@@ -41,14 +37,7 @@ services:
       - http.max_content_length=201mb
       - network.host=_site_   
       - xpack.security.enabled=false
-  mongo:
-    image: mongo:6.0
-    ports:
-      - "127.0.0.1:27017:27017"
-    volumes:
-      - mongo_data:/data/db:rw
 volumes:
   exo_data:
   exo_logs:
   search_data:
-  mongo_data:
