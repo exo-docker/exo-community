@@ -40,7 +40,6 @@ services:
       - xpack.security.enabled=false
   mongo:
     image: mongo:6.0
-    container_name: mongo
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
