@@ -16,6 +16,8 @@ services:
       EXO_MONGO_HOST: mongo
       EXO_MONGO_PORT: 27017
       EXO_MONGO_DB_NAME: chat
+      EXO_JVM_SIZE_MAX: 6g
+      EXO_JVM_SIZE_MIN: 3g
     volumes:
       - exo_data:/srv/exo
       - exo_logs:/var/log/exo
