@@ -556,25 +556,31 @@ else
     _ADDON_MGR_OPTION_PATCHES_CATALOG="--catalog=${EXO_PATCHES_CATALOG_URL}"
   fi
 
-  # add-ons removal
-  if [ -z "${EXO_ADDONS_REMOVE_LIST:-}" ]; then
-    echo "# no add-on to uninstall from EXO_ADDONS_REMOVE_LIST environment variable."
+  if [ -f /opt/exo/_done.addons_removal ]; then
+    echo "INFO: add-ons removal already done! skipping this step."
   else
-    echo "# uninstalling default add-ons from EXO_ADDONS_REMOVE_LIST environment variable:"
-    echo ${EXO_ADDONS_REMOVE_LIST} | tr ',' '\n' | while read _addon ; do
-      if [ -n "${_addon}" ]; then
-        # Uninstall addon
-        ${EXO_APP_DIR}/addon uninstall ${_addon}
-        if [ $? != 0 ]; then
-          echo "[ERROR] Problem during add-on [${_addon}] uninstall."
-          exit 1
+    # add-ons removal
+    if [ -z "${EXO_ADDONS_REMOVE_LIST:-}" ]; then
+      echo "# no add-on to uninstall from EXO_ADDONS_REMOVE_LIST environment variable."
+    else
+      echo "# uninstalling default add-ons from EXO_ADDONS_REMOVE_LIST environment variable:"
+      echo ${EXO_ADDONS_REMOVE_LIST} | tr ',' '\n' | while read _addon ; do
+        if [ -n "${_addon}" ]; then
+          # Uninstall addon
+          ${EXO_APP_DIR}/addon uninstall ${_addon}
+          if [ $? != 0 ]; then
+            echo "[ERROR] Problem during add-on [${_addon}] uninstall."
+            exit 1
+          fi
         fi
+      done
+      if [ $? != 0 ]; then
+        echo "[ERROR] An error during add-on uninstallation phase aborted eXo startup !"
+        exit 1
       fi
-    done
-    if [ $? != 0 ]; then
-      echo "[ERROR] An error during add-on uninstallation phase aborted eXo startup !"
-      exit 1
     fi
+    # put a file to avoid doing the addons removal twice
+    touch /opt/exo/_done.addons_removal
   fi
 
   echo "# ------------------------------------ #"
