@@ -21,7 +21,7 @@ services:
       EXO_DB_NAME: exo
       EXO_DB_USER: exo
       EXO_DB_PASSWORD: my-secret-pw
-      EXO_ADDONS_LIST: "exo-documents-preview-addon:1.0.x-SNAPSHOT"
+      EXO_ADDONS_LIST: "exo-documents-preview-addon:1.0.0"
       EXO_ADDONS_REMOVE_LIST: "exo-onlyoffice"
       EXO_ADDONS_NOCOMPAT_MODE: "true"
       EXO_JVM_LOG_GC_ENABLED: "true"

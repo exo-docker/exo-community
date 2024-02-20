@@ -20,7 +20,7 @@ RUN apt-get -qq update && \
   echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
   echo "ttf-mscorefonts-installer msttcorefonts/present-mscorefonts-eula note" | debconf-set-selections && \
   apt-get -qq -y install ${_APT_OPTIONS} ttf-mscorefonts-installer && \
-  apt-get -qq -y install ${_APT_OPTIONS} fontconfig && \
+  apt-get -qq -y install ${_APT_OPTIONS} libreoffice-calc libreoffice-draw libreoffice-impress libreoffice-math libreoffice-writer && \
   apt-get -qq -y autoremove && \
   apt-get -qq -y clean && \
   rm -rf /var/lib/apt/lists/*
@@ -40,7 +40,7 @@ ARG DOWNLOAD_URL
 # this allow to specifiy a user to download a protected binary
 ARG DOWNLOAD_USER
 # allow to override the list of addons to package by default
-ARG ADDONS="exo-jdbc-driver-mysql:2.0.3 exo-jdbc-driver-postgresql:2.0.0"
+ARG ADDONS="exo-documents-preview-addon:1.0.0 exo-jdbc-driver-mysql:2.0.3 exo-jdbc-driver-postgresql:2.0.0"
 # Default base directory on the plf archive
 ARG ARCHIVE_BASE_DIR=platform-community-${EXO_VERSION}
 
