@@ -33,6 +33,7 @@ services:
       - "8080:8080"
     volumes:
       - exo_data:/srv/exo
+      - exo_codec:/etc/exo/codec:rw
       - exo_logs:/var/log/exo
     depends_on:
       - mysql
@@ -67,6 +68,7 @@ services:
       - mongo_data:/data/db:rw
 volumes:
   exo_data:
+  exo_codec:
   exo_logs:
   mysql_data:
   search_data:
