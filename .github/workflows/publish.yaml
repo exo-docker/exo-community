@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write # needed for signing the images with GitHub OIDC Token
 
     steps:
       - name: Checkout repository
@@ -43,16 +44,28 @@ jobs:
           labels: ${{ steps.metaghcr.outputs.labels }}
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.1.1
+        uses: sigstore/cosign-installer@v3.4.0
         
-      - name: Write signing key to disk
-        run: 'echo "$KEY" > cosign.key'
-        env:
-          KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-      
-      - name: Sign the published ghcr.io Docker image
-        run: cosign sign --yes --key cosign.key "${TAGS}@${DIGEST}"
+      - name: Sign the published ghcr.io Docker image with Cosign
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          DIGEST: ${{ steps.pushghcr.outputs.digest }}
+          TAGS: ${{ steps.metaghcr.outputs.tags }}
+    
+      - name: Sign the images with GitHub OIDC Token
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes ${images}
+        env:
           DIGEST: ${{ steps.pushghcr.outputs.digest }}
           TAGS: ${{ steps.metaghcr.outputs.tags }}
