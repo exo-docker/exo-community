@@ -712,7 +712,7 @@ CATALINA_OPTS="${CATALINA_OPTS:-} -Djava.security.egd=file:/dev/./urandom"
 case "${EXO_DB_TYPE}" in
   mysql)
     echo "Waiting for database ${EXO_DB_TYPE} availability at ${EXO_DB_HOST}:${EXO_DB_PORT} ..."
-    wait-for ${EXO_DB_HOST}:${EXO_DB_PORT} -s -t ${EXO_DB_TIMEOUT}
+    wait-for ${EXO_DB_HOST}:${EXO_DB_PORT} -q -t ${EXO_DB_TIMEOUT}
     if [ $? != 0 ]; then
       echo "[ERROR] The ${EXO_DB_TYPE} database ${EXO_DB_HOST}:${EXO_DB_PORT} was not available within ${EXO_DB_TIMEOUT}s ! eXo startup aborted ..."
       exit 1
@@ -722,7 +722,7 @@ case "${EXO_DB_TYPE}" in
     ;;
   pgsql|postgres|postgresql)
     echo "Waiting for database ${EXO_DB_TYPE} availability at ${EXO_DB_HOST}:${EXO_DB_PORT} ..."
-    wait-for ${EXO_DB_HOST}:${EXO_DB_PORT} -s -t ${EXO_DB_TIMEOUT}
+    wait-for ${EXO_DB_HOST}:${EXO_DB_PORT} -q -t ${EXO_DB_TIMEOUT}
     if [ $? != 0 ]; then
       echo "[ERROR] The ${EXO_DB_TYPE} database ${EXO_DB_HOST}:${EXO_DB_PORT} was not available within ${EXO_DB_TIMEOUT}s ! eXo startup aborted ..."
       exit 1
@@ -735,7 +735,7 @@ esac
 # Wait for mongodb availability (if chat is installed)
 if [ -f /opt/exo/addons/statuses/exo-chat.status ]; then
   echo "Waiting for mongodb availability at ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} ..."
-  wait-for ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} -s -t ${EXO_MONGO_TIMEOUT}
+  wait-for ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} -q -t ${EXO_MONGO_TIMEOUT}
   if [ $? != 0 ]; then
     echo "[ERROR] The mongodb database ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} was not available within ${EXO_MONGO_TIMEOUT}s ! eXo startup aborted ..."
     exit 1
@@ -744,7 +744,7 @@ fi
 
 # Wait for elasticsearch availability (if external)
 echo "Waiting for external elastic search availability at ${EXO_ES_HOST}:${EXO_ES_PORT} ..."
-wait-for ${EXO_ES_HOST}:${EXO_ES_PORT} -s -t ${EXO_ES_TIMEOUT}
+wait-for ${EXO_ES_HOST}:${EXO_ES_PORT} -q -t ${EXO_ES_TIMEOUT}
 if [ $? != 0 ]; then
   echo "[ERROR] The external elastic search ${EXO_ES_HOST}:${EXO_ES_PORT} was not available within ${EXO_ES_TIMEOUT}s ! eXo startup aborted ..."
   exit 1

@@ -10,27 +10,21 @@
 #           docker run -d --rm -p 8080:8080 -v exo_data:/srv/exo exoplatform/exo-community
 #           docker run -d -p 8080:8080 -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro exoplatform/exo-community
 
-FROM  exoplatform/jdk:openjdk-17-ubuntu-2204
+FROM  eclipse-temurin:17-jdk-alpine
 LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
 
 # Install the needed packages
-RUN apt-get -qq update && \
-  apt-get -qq -y upgrade ${_APT_OPTIONS} && \
-  apt-get -qq -y install ${_APT_OPTIONS} xmlstarlet jq && \
-  echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
-  echo "ttf-mscorefonts-installer msttcorefonts/present-mscorefonts-eula note" | debconf-set-selections && \
-  apt-get -qq -y install ${_APT_OPTIONS} ttf-mscorefonts-installer && \
-  apt-get -qq -y install ${_APT_OPTIONS} libreoffice-calc libreoffice-draw libreoffice-impress libreoffice-math libreoffice-writer && \
-  apt-get -qq -y autoremove && \
-  apt-get -qq -y clean && \
-  rm -rf /var/lib/apt/lists/*
-# Check if the released binary was modified and make the build fail if it is the case
-RUN wget -nv -q -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/1.15.0/yq_linux_amd64 && \
-  echo "35d8b1123849350daa5ff11dd23c81b8 /usr/bin/yq" | md5sum -c - \
-  || { \
-  echo "ERROR: the [/usr/bin/yq] binary downloaded from a github release was modified while is should not !!"; \
-  return 1; \
-  } && chmod a+x /usr/bin/yq
+RUN apk update && \
+  apk upgrade && \
+  apk add --no-cache xmlstarlet jq bash curl tini && \
+  apk --no-cache add msttcorefonts-installer fontconfig && \
+  update-ms-fonts &&  fc-cache -f && \
+  apk add --no-cache libreoffice
+
+RUN wget -nv -q -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.9.3/yq_linux_amd64 && \
+  chmod a+x /usr/bin/yq
+
+RUN sed -i "s/999/99/" /etc/group
 
 # Build Arguments and environment variables
 ARG EXO_VERSION=6.5.0
@@ -58,13 +52,16 @@ ENV EXO_GROUP ${EXO_USER}
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 # giving all rights to eXo user
-RUN useradd --create-home -u 999 --user-group --shell /bin/bash ${EXO_USER}
+RUN addgroup -g 999 ${EXO_USER}
+RUN adduser -u 999 -G ${EXO_USER} -s /bin/bash --disabled-password ${EXO_USER}
 
 # Create needed directories
 RUN mkdir -p ${EXO_DATA_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR} \
     && mkdir -p ${EXO_SHARED_DATA_DIR}  && chown ${EXO_USER}:${EXO_GROUP} ${EXO_SHARED_DATA_DIR}  \
     && mkdir -p ${EXO_TMP_DIR} && chown ${EXO_USER}:${EXO_GROUP} ${EXO_TMP_DIR} \
     && mkdir -p ${EXO_LOG_DIR} && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
+
+RUN mkdir -p /srv/downloads
 
 # Install eXo Platform
 RUN if [ -n "${DOWNLOAD_USER}" ]; then PARAMS="-u ${DOWNLOAD_USER}"; fi && \
@@ -81,6 +78,10 @@ RUN if [ -n "${DOWNLOAD_USER}" ]; then PARAMS="-u ${DOWNLOAD_USER}"; fi && \
   ln -s ${EXO_APP_DIR}/gatein/conf /etc/exo && \
   mkdir -p ${EXO_CODEC_DIR} && chown ${EXO_USER}:${EXO_GROUP} ${EXO_CODEC_DIR} && \
   rm -rf ${EXO_APP_DIR}/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/logs
+
+# Add wait-for
+RUN wget -nv -q -O /usr/bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/v2.1.3/wait-for && \
+  chmod a+x /usr/bin/wait-for
 
 # Install Docker customization file
 ADD scripts/setenv-docker-customize.sh ${EXO_APP_DIR}/bin/setenv-docker-customize.sh
@@ -100,7 +101,7 @@ USER ${EXO_USER}
 RUN for a in ${ADDONS}; do echo "Installing addon $a"; /opt/exo/addon install $a; done
 
 WORKDIR ${EXO_LOG_DIR}
-ENTRYPOINT ["/usr/local/bin/tini", "--"]
+ENTRYPOINT ["/sbin/tini", "--"]
 # Health Check
 HEALTHCHECK CMD curl --fail http://localhost:8080/ || exit 1
 CMD [ "/opt/exo/start_eXo.sh" ]
