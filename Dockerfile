@@ -10,7 +10,7 @@
 #           docker run -d --rm -p 8080:8080 -v exo_data:/srv/exo exoplatform/exo-community
 #           docker run -d -p 8080:8080 -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro exoplatform/exo-community
 
-FROM  exoplatform/jdk:openjdk-21-ubuntu-2204
+FROM  exoplatform/jdk:openjdk-21-ubuntu-2404
 LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
 
 # Install the needed packages
