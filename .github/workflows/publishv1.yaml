@@ -4,9 +4,9 @@ on:
   push:
     tags:
       - '*'
-    branches: ['develop']
+    branches: ['master']
 env:
-  BRANCH_BUILD_TAGS: "latest,develop"
+  BRANCH_BUILD_TAGS: "latest"
 jobs:
   parse-docker-build-env:
     name: 'Parse Docker Build Environment'
@@ -57,6 +57,11 @@ jobs:
         contents: read
         packages: write
         id-token: write
+    strategy: 
+      fail-fast: false
+      max-parallel: 1
+      matrix: 
+        tags: ${{ fromJson(needs.build-dockerhub-image.outputs.tags) }}        
     name: "sign-docker-image"
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -66,8 +71,7 @@ jobs:
         uses: exo-actions/buildDockerImage-action/sign-image@v1 
         id: sign-docker-image
         with:
-          dockerImage: "exoplatform/exo-community"
-          dockerImageTag: ${{ needs.build-dockerhub-image.outputs.tags }} 
+          dockerImage: "exoplatform/exo-community"          
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_PRIVATE_KEY_ID: ${{secrets.DOCKER_PRIVATE_KEY_ID}}
