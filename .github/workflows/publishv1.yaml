@@ -30,28 +30,29 @@ jobs:
             exit 1
           fi
 
-  build-dockerhub-image:
+  build-and-sign-dockerhub-image:
     permissions:
       contents: read
       packages: write
       id-token: write
-      attestations: write
-    name: "Build Docker Images to DockerHub Registry"
-    uses: exo-actions/buildDockerImage-action/.github/workflows/buildDockerImage.yml@DEFINE_GLOBAL_ACTION
+      attestations: write    
+    runs-on: ubuntu-latest    
     needs: parse-docker-build-env
-    with:
-      dockerImage: "exoplatform/exo-community"
-      dockerImageTag: ${{ needs.parse-docker-build-env.outputs.buildTags }}
-      signImage: true
-      cosignImage: true
-      attestImage: true
-    secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_PRIVATE_KEY_ID: ${{ secrets.DOCKER_PRIVATE_KEY_ID }}
-      DOCKER_PRIVATE_KEY: ${{ secrets.DOCKER_PRIVATE_KEY }}
-      DOCKER_PRIVATE_KEY_PASSPHRASE: ${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}
-      COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+    steps:
+      - name: "Build and sign Docker images"
+        uses: exo-actions/buildDockerImage-action@DEFINE_GLOBAL_ACTION
+        with:
+          dockerImage: "exoplatform/exo-community"
+          dockerImageTag: ${{ needs.parse-docker-build-env.outputs.buildTags }}
+          signImage: true
+          cosignImage: true
+          attestImage: true
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_PRIVATE_KEY_ID: ${{ secrets.DOCKER_PRIVATE_KEY_ID }}
+          DOCKER_PRIVATE_KEY: ${{ secrets.DOCKER_PRIVATE_KEY }}
+          DOCKER_PRIVATE_KEY_PASSPHRASE: ${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}    
           
     
