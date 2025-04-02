@@ -33,14 +33,13 @@ RUN wget -nv -q -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download
   } && chmod a+x /usr/bin/yq
 
 # Build Arguments and environment variables
-ARG EXO_VERSION=6.5.0
+ARG EXO_VERSION=7.0.0
 
 # this allow to specify an eXo Platform download url
 ARG DOWNLOAD_URL
 # this allow to specifiy a user to download a protected binary
 ARG DOWNLOAD_USER
-# allow to override the list of addons to package by default
-ARG ADDONS="exo-documents-preview-addon:1.0.0 exo-jdbc-driver-mysql:2.0.3 exo-jdbc-driver-postgresql:2.4.1"
+
 # Default base directory on the plf archive
 ARG ARCHIVE_BASE_DIR=platform-community-${EXO_VERSION}
 
@@ -95,9 +94,6 @@ RUN chmod 755 ${EXO_APP_DIR}/bin/setenv-docker-customize.sh && \
   grep 'setenv-docker-customize.sh' ${EXO_APP_DIR}/bin/setenv.sh
 
 USER ${EXO_USER}
-
-
-RUN for a in ${ADDONS}; do echo "Installing addon $a"; /opt/exo/addon install $a; done
 
 WORKDIR ${EXO_LOG_DIR}
 ENTRYPOINT ["/usr/local/bin/tini", "--"]

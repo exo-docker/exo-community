@@ -6,6 +6,7 @@ The eXo Platform Community edition Docker image support `HSQLDB` (for testing) a
 
 | Image                             | JDK | eXo Platform          |
 |-----------------------------------|-----|-----------------------|
+| exoplatform/exo-community:7.0     | 21  | 7.0 Community edition |
 | exoplatform/exo-community:6.5     | 17  | 6.5 Community edition |
 | exoplatform/exo-community:6.4     | 17  | 6.4 Community edition |
 | exoplatform/exo-community:6.3     | 11  | 6.3 Community edition |
@@ -24,14 +25,12 @@ The image is compatible with the following databases system :  `MySQL` (default)
   - [Easy way](#easy-way--with-docker-compose)
   - [Advanced way](#advanced-way--with-docker-images)
 - [Configuration options](#configuration-options)
-  - [Add-ons](#add-ons)
   - [JVM](#jvm)
   - [Frontend proxy](#frontend-proxy)
   - [Tomcat](#tomcat)
     - [Data on disk](#data-on-disk)
   - [Database](#database)
     - [MySQL](#mysql)
-  - [Mongodb](#mongodb)
   - [ElasticSearch](#elasticsearch)
   - [LDAP / Active Directory](#ldap--active-directory)
   - [JOD Converter](#jod-converter)
@@ -45,9 +44,6 @@ The image is compatible with the following databases system :  `MySQL` (default)
   - [configure eXo Platform behind a reverse-proxy](#configure-exo-platform-behind-a-reverse-proxy)
   - [use MySQL database](#use-mysql-database)
   - [see eXo Platform logs](#see-exo-platform-logs)
-  - [install eXo Platform add-ons](#install-exo-platform-add-ons)
-  - [list eXo Platform add-ons available](#list-exo-platform-add-ons-available)
-  - [list eXo Platform add-ons installed](#list-exo-platform-add-ons-installed)
   - [customize some eXo Platform settings](#customize-some-exo-platform-settings)
 - [Image build](#image-build)
 - [Image signature](#image-signature)
@@ -104,35 +100,6 @@ You can also use Docker Compose (see the provided `docker-compose.yml` file as a
 docker logs --follow <CONTAINER_NAME>
 ```
 
-### install eXo Platform add-ons
-
-To install add-ons in the container, provide a commas separated list of add-ons you want to install in a `EXO_ADDONS_LIST` environment variable to the container:
-
-```bash
-docker run -d \
-  -p 8080:8080 \
-  -e EXO_ADDONS_LIST="exo-tasks:3.4.x-SNAPSHOT" \
-  exoplatform/exo-community
-```
-
-INFO: the provided add-ons list will be installed in the container during the container creation.
-
-### list eXo Platform add-ons available
-
-In a *running container* execute the following command:
-
-```bash
-docker exec <CONTAINER_NAME> /opt/exo/addon list
-```
-
-### list eXo Platform add-ons installed
-
-In a *running container* execute the following command:
-
-```bash
-docker exec <CONTAINER_NAME> /opt/exo/addon list --installed
-```
-
 ### customize some eXo Platform settings
 
 All previously mentioned [environment variables](#configuration-options) can be defined in a standard Docker way with `-e ENV_VARIABLE="value"` parameters :
@@ -160,12 +127,6 @@ The simplest way to build this image is to use default values :
     docker build -t exoplatform/exo-community .
 
 This will produce an image with the current eXo Platform Community edition.
-
-The build can be customized with the following arguments :
-
-| ARGUMENT NAME | MANDATORY | DEFAULT VALUE                                          | DESCRIPTION                                                                         |
-|---------------|-----------|--------------------------------------------------------|-------------------------------------------------------------------------------------|
-| ADDONS        | NO        | `exo-chat exo-tasks:1.1.0 exo-jdbc-driver-mysql:1.1.0` | a space separated list of add-ons to install (default: exo-jdbc-driver-mysql:1.1.0) |
 
 ## Image Signature
 
