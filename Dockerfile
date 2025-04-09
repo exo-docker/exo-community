@@ -33,10 +33,11 @@ RUN wget -nv -q -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download
   } && chmod a+x /usr/bin/yq
 
 # Build Arguments and environment variables
-ARG EXO_VERSION=7.0.0
+ARG EXO_VERSION="7.1.x-devx-SNAPSHOT"
 
 # this allow to specify an eXo Platform download url
-ARG DOWNLOAD_URL
+ARG DOWNLOAD_URL="https://repository.exoplatform.org/content/groups/public/org/exoplatform/platform/distributions/plf-community-tomcat-standalone/7.1.x-devx-SNAPSHOT/plf-community-tomcat-standalone-7.1.x-devx-20250409.031732-51.zip"
+
 # this allow to specifiy a user to download a protected binary
 ARG DOWNLOAD_USER
 
