@@ -1,16 +1,4 @@
-## Configuration options
-
-### Add-ons
-
-Some add-ons are already installed in eXo image but you can install other one or remove some of the pre-installed one :
-
-| VARIABLE                 | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                                   |
-| ------------------------ | --------- | ------------- | --------------------------------------------------------------------------------------------- |
-| EXO_ADDONS_LIST          | NO        | -             | commas separated list of add-ons to install (ex: exo-answers,exo-skype:1.0.x-SNAPSHOT)        |
-| EXO_ADDONS_REMOVE_LIST   | NO        | -             | commas separated list of add-ons to uninstall (ex: exo-chat) (since: 4.4.2_3) |
-| EXO_ADDONS_CATALOG_URL   | NO        | -             | The url of a valid eXo Catalog                                                                |
-| EXO_ADDONS_CONFLICT_MODE | NO        | -             | decision to make in case of file conflicts (overwrite, ignore or fail)                        |
-| EXO_ADDONS_NOCOMPAT_MODE | NO        | false         | decision to allow to install incompatible addon |                                                  |
+## Configuration options                                         |
 
 ### JVM
 
@@ -89,21 +77,6 @@ The following environment variables must be passed to the container in order to 
 | VARIABLE             | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                                       |
 |----------------------|-----------|---------------|---------------------------------------------------------------------------------------------------|
 | EXO_DB_MYSQL_USE_SSL | NO        | `false`       | connecting securely to MySQL using SSL (see MySQL Connector/J documentation for useSSL parameter) |
-
-### Mongodb
-
-The following environment variables should be passed to the container in order to work if you installed eXo Chat add-on :
-
-| VARIABLE           | MANDATORY | DEFAULT VALUE | DESCRIPTION                                                                                        |
-|--------------------|-----------|---------------|----------------------------------------------------------------------------------------------------|
-| EXO_MONGO_HOST     | NO        | `mongo`       | the hostname to connect to the mongodb database for eXo Chat                                       |
-| EXO_MONGO_PORT     | NO        | `27017`       | the port to connect to the mongodb server                                                          |
-| EXO_MONGO_USERNAME | NO        | -             | the username to use to connect to the mongodb database (no authentification configured by default) |
-| EXO_MONGO_PASSWORD | NO        | -             | the password to use to connect to the mongodb database (no authentification configured by default) |
-| EXO_MONGO_DB_NAME  | NO        | `chat`        | the mongodb database name to use for eXo Chat                                                      |
-| EXO_MONGO_TIMEOUT  | NO        | `60`          | the number of seconds to wait for mongodb availability before cancelling eXo startup               |
-
-INFO: you must configure and start an external MongoDB server by yourself
 
 ### ElasticSearch
 The following environment variables should be passed to the container in order to configure the search feature :

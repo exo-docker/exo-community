@@ -34,21 +34,6 @@ add_in_exo_configuration() {
   echo "${P1}" >> ${EXO_CONFIG_FILE}
 }
 
-# $1 : the full line content to insert at the end of Chat configuration file
-add_in_chat_configuration() {
-  local _CONFIG_FILE="/etc/exo/chat.properties"
-  local P1="$1"
-  if [ ! -f ${_CONFIG_FILE} ]; then
-    echo "Creating Chat configuration file [${_CONFIG_FILE}]"
-    touch ${_CONFIG_FILE}
-    if [ $? != 0 ]; then
-      echo "Problem during Chat configuration file creation, startup aborted !"
-      exit 1
-    fi
-  fi
-  echo "${P1}" >> ${_CONFIG_FILE}
-}
-
 # -----------------------------------------------------------------------------
 # Check configuration variables and add default values when needed
 # -----------------------------------------------------------------------------
@@ -134,18 +119,6 @@ esac
 
 [ -z "${EXO_ACCESS_LOG_ENABLED}" ] && EXO_ACCESS_LOG_ENABLED="false"
 
-[ -z "${EXO_MONGO_TIMEOUT}" ] && EXO_MONGO_TIMEOUT="60"
-[ -z "${EXO_MONGO_HOST}" ] && EXO_MONGO_HOST="mongo"
-[ -z "${EXO_MONGO_PORT}" ] && EXO_MONGO_PORT="27017"
-[ -z "${EXO_MONGO_USERNAME}" ] && EXO_MONGO_USERNAME="-"
-[ -z "${EXO_MONGO_PASSWORD}" ] && EXO_MONGO_PASSWORD="-"
-[ -z "${EXO_MONGO_DB_NAME}" ] && EXO_MONGO_DB_NAME="chat"
-
-[ -z "${EXO_CHAT_SERVER_STANDALONE}" ] && EXO_CHAT_SERVER_STANDALONE="false"
-[ -z "${EXO_CHAT_SERVER_URL}" ] && EXO_CHAT_SERVER_URL="http://localhost:8080"
-[ -z "${EXO_CHAT_SERVICE_URL}" ] && EXO_CHAT_SERVICE_URL=""
-[ -z "${EXO_CHAT_SERVER_PASSPHRASE}" ] && EXO_CHAT_SERVER_PASSPHRASE="something2change"
-
 [ -z "${EXO_ES_TIMEOUT}" ] && EXO_ES_TIMEOUT="60"
 [ -z "${EXO_ES_SCHEME}" ] && EXO_ES_SCHEME="http"
 [ -z "${EXO_ES_HOST}" ] && EXO_ES_HOST="localhost"
@@ -174,9 +147,6 @@ EXO_ES_URL="${EXO_ES_SCHEME}://${EXO_ES_HOST}:${EXO_ES_PORT}"
 [ -z "${EXO_AGENDA_OFFICE_CONNECTOR_ENABLED}" ] && EXO_AGENDA_OFFICE_CONNECTOR_ENABLED="true"
 [ -z "${EXO_AGENDA_GOOGLE_CONNECTOR_CLIENT_API_KEY}" ] && EXO_AGENDA_GOOGLE_CONNECTOR_CLIENT_API_KEY=""
 [ -z "${EXO_AGENDA_OFFICE_CONNECTOR_CLIENT_API_KEY}" ] && EXO_AGENDA_OFFICE_CONNECTOR_CLIENT_API_KEY=""
-
-[ -z "${EXO_ADDONS_CONFLICT_MODE}" ] && EXO_ADDONS_CONFLICT_MODE=""
-[ -z "${EXO_ADDONS_NOCOMPAT_MODE}" ] && EXO_ADDONS_NOCOMPAT_MODE="false"
 
 [ -z "${EXO_JCR_FS_STORAGE_ENABLED}" ] && EXO_JCR_FS_STORAGE_ENABLED=""
 [ -z "${EXO_FILE_STORAGE_TYPE}" ] && EXO_FILE_STORAGE_TYPE=""
@@ -473,48 +443,6 @@ if [ "${EXO_JMX_ENABLED}" = "true" ]; then
   # JOD Converter
   add_in_exo_configuration "exo.jodconverter.portnumbers=${EXO_JODCONVERTER_PORTS}"
 
-  # eXo Chat configuration
-  add_in_chat_configuration "# eXo Chat server configuration"
-  # The password to access REST service on the eXo Chat server.
-  add_in_chat_configuration "chatPassPhrase=${EXO_CHAT_SERVER_PASSPHRASE}"
-  # The eXo group who can create teams.
-  add_in_chat_configuration "teamAdminGroup=/platform/users"
-  # We must override this to remain inside the docker container (works only for embedded chat server)
-  add_in_chat_configuration "chatServerUrl=${EXO_CHAT_SERVER_URL}/chatServer"
-
-  add_in_chat_configuration "# eXo Chat client configuration"
-  # Time interval to refresh messages in a chat.
-  add_in_chat_configuration "chatIntervalChat=3000"
-  # Time interval to keep a chat session alive in milliseconds.
-  add_in_chat_configuration "chatIntervalSession=60000"
-  # Time interval to refresh user status in milliseconds.
-  add_in_chat_configuration "chatIntervalStatus=20000"
-  # Time interval to refresh Notifications in the main menu in milliseconds.
-  add_in_chat_configuration "chatIntervalNotif=3000"
-  # Time interval to refresh Users list in milliseconds.
-  add_in_chat_configuration "chatIntervalUsers=5000"
-  # Time after which a token will be invalid. The use will then be considered offline.
-  add_in_chat_configuration "chatTokenValidity=30000"
-
-  # Mongodb configuration (for the Chat)
-  add_in_chat_configuration "# eXo Chat mongodb configuration"
-  add_in_chat_configuration "dbServerHosts=${EXO_MONGO_HOST}:${EXO_MONGO_PORT}"
-  add_in_chat_configuration "dbName=${EXO_MONGO_DB_NAME}"
-  if [ "${EXO_MONGO_USERNAME:-}" = "-" ]; then
-    add_in_chat_configuration "dbAuthentication=false"
-    add_in_chat_configuration "#dbUser="
-    add_in_chat_configuration "#dbPassword="
-  else
-    add_in_chat_configuration "dbAuthentication=true"
-    add_in_chat_configuration "dbUser=${EXO_MONGO_USERNAME}"
-    add_in_chat_configuration "dbPassword=${EXO_MONGO_PASSWORD}"
-  fi
-
-  # The notifications are cleaned up every one hour by default.
-  add_in_chat_configuration "chatCronNotifCleanup=0 0 * * * ?"
-  # When a user reads a chat, the application displays messages of some days in the past.
-  add_in_chat_configuration "chatReadDays=30"
-
   # eXo Rewards
   add_in_exo_configuration "# Rewards configuration"
   add_in_exo_configuration "exo.wallet.admin.key=${EXO_REWARDS_WALLET_ADMIN_KEY}"
@@ -539,105 +467,6 @@ if [ "${EXO_JMX_ENABLED}" = "true" ]; then
 
   # put a file to avoid doing the configuration twice
   touch /opt/exo/_done.configuration
-fi
-
-# -----------------------------------------------------------------------------
-# Install add-ons if needed when the container is created for the first time
-# -----------------------------------------------------------------------------
-if [ -f /opt/exo/_done.addons ]; then
-  echo "INFO: add-ons installation already done! skipping this step."
-else
-  echo "# ------------------------------------ #"
-  echo "# eXo add-ons management start ..."
-  echo "# ------------------------------------ #"
-
-  if [ ! -z "${EXO_ADDONS_CATALOG_URL:-}" ]; then
-    echo "The add-on manager catalog url was overriden with : ${EXO_ADDONS_CATALOG_URL}"
-    _ADDON_MGR_OPTION_CATALOG="--catalog=${EXO_ADDONS_CATALOG_URL}"
-  fi
-
-  if [ ! -z "${EXO_PATCHES_CATALOG_URL:-}" ]; then
-    echo "The add-on manager patches catalog url was defined with : ${EXO_PATCHES_CATALOG_URL}"
-    _ADDON_MGR_OPTION_PATCHES_CATALOG="--catalog=${EXO_PATCHES_CATALOG_URL}"
-  fi
-
-  if [ -f /opt/exo/_done.addons_removal ]; then
-    echo "INFO: add-ons removal already done! skipping this step."
-  else
-    # add-ons removal
-    if [ -z "${EXO_ADDONS_REMOVE_LIST:-}" ]; then
-      echo "# no add-on to uninstall from EXO_ADDONS_REMOVE_LIST environment variable."
-    else
-      echo "# uninstalling default add-ons from EXO_ADDONS_REMOVE_LIST environment variable:"
-      echo ${EXO_ADDONS_REMOVE_LIST} | tr ',' '\n' | while read _addon ; do
-        if [ -n "${_addon}" ]; then
-          # Uninstall addon
-          ${EXO_APP_DIR}/addon uninstall ${_addon}
-          if [ $? != 0 ]; then
-            echo "[ERROR] Problem during add-on [${_addon}] uninstall."
-            exit 1
-          fi
-        fi
-      done
-      if [ $? != 0 ]; then
-        echo "[ERROR] An error during add-on uninstallation phase aborted eXo startup !"
-        exit 1
-      fi
-    fi
-    # put a file to avoid doing the addons removal twice
-    touch /opt/exo/_done.addons_removal
-  fi
-
-  echo "# ------------------------------------ #"
-  
-  # add-on installation options
-  if [ "${EXO_ADDONS_CONFLICT_MODE:-}" = "overwrite" ] || [ "${EXO_ADDONS_CONFLICT_MODE:-}" = "ignore" ]; then 
-    _ADDON_MGR_OPTIONS="${_ADDON_MGR_OPTIONS:-} --conflict=${EXO_ADDONS_CONFLICT_MODE}"
-  fi
-
-  if [ "${EXO_ADDONS_NOCOMPAT_MODE:-false}" = "true" ]; then 
-    _ADDON_MGR_OPTIONS="${_ADDON_MGR_OPTIONS:-} --no-compat"
-  fi
-
-  # add-on installation
-  if [ -z "${EXO_ADDONS_LIST:-}" ]; then
-    echo "# no add-on to install from EXO_ADDONS_LIST environment variable."
-  else
-    echo "# installing add-ons from EXO_ADDONS_LIST environment variable:"
-    _ADDON_COUNTER=0
-    echo ${EXO_ADDONS_LIST} | tr ',' '\n' | while read _addon ; do
-      if [ -n "${_addon}" ]; then
-        _ADDON_COUNTER=$((_ADDON_COUNTER+1))
-        # Install addon
-        if [ ${_ADDON_COUNTER} -eq "1" ]; then 
-          ${EXO_APP_DIR}/addon install ${_ADDON_MGR_OPTIONS:-} ${_ADDON_MGR_OPTION_CATALOG:-} ${_addon} --force --batch-mode --no-cache
-        else
-          ${EXO_APP_DIR}/addon install ${_ADDON_MGR_OPTIONS:-} ${_ADDON_MGR_OPTION_CATALOG:-} ${_addon} --force --batch-mode
-        fi
-        if [ $? != 0 ]; then
-          echo "[ERROR] Problem during add-on [${_addon}] install."
-          exit 1
-        fi
-      fi
-    done
-    if [ $? != 0 ]; then
-      echo "[ERROR] An error during add-on installation phase aborted eXo startup !"
-      exit 1
-    fi
-  fi
-  echo "# ------------------------------------ #"
-  echo "# eXo add-ons management done."
-  echo "# ------------------------------------ #"
-
-  # put a file to avoid doing the configuration twice
-  touch /opt/exo/_done.addons
-fi
-
-# -----------------------------------------------------------------------------
-# Change chat add-on security token at each start
-# -----------------------------------------------------------------------------
-if [ -f /etc/exo/chat.properties ]; then
-  sed -i 's/^chatPassPhrase=.*$/chatPassPhrase='"$(tr -dc '[:alnum:]' < /dev/urandom  | dd bs=4 count=6 2>/dev/null)"'/' /etc/exo/chat.properties
 fi
 
 # -----------------------------------------------------------------------------
@@ -675,7 +504,6 @@ if [ "${EXO_JMX_ENABLED}" = "true" ]; then
     CATALINA_OPTS="${CATALINA_OPTS} -Dcom.sun.management.jmxremote.access.file=/opt/exo/conf/jmxremote.access"
   fi
 fi
-
 
 # -----------------------------------------------------------------------------
 # LOG GC configuration
@@ -731,16 +559,6 @@ case "${EXO_DB_TYPE}" in
     fi
     ;;
 esac
-
-# Wait for mongodb availability (if chat is installed)
-if [ -f /opt/exo/addons/statuses/exo-chat.status ]; then
-  echo "Waiting for mongodb availability at ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} ..."
-  wait-for ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} -s -t ${EXO_MONGO_TIMEOUT}
-  if [ $? != 0 ]; then
-    echo "[ERROR] The mongodb database ${EXO_MONGO_HOST}:${EXO_MONGO_PORT} was not available within ${EXO_MONGO_TIMEOUT}s ! eXo startup aborted ..."
-    exit 1
-  fi
-fi
 
 # Wait for elasticsearch availability (if external)
 echo "Waiting for external elastic search availability at ${EXO_ES_HOST}:${EXO_ES_PORT} ..."
