@@ -52,7 +52,7 @@ services:
         aliases:
           - ${EXO_PROXY_VHOST:-exoapp.local}
   exo:
-    image: exoplatform/exo-community:7.0
+    image: exoplatform/exo-community:7.0.0
     environment:
       EXO_PROXY_VHOST: ${EXO_PROXY_VHOST:-exoapp.local}
       EXO_PROXY_PORT: 80
