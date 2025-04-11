@@ -6,9 +6,9 @@
 #          Not suitable for production environments without modifications
 #
 # Features included:
-# - eXo Platform 7.0
-# - MySQL 8.0 database
-# - Elasticsearch 2.1.0 for search
+# - eXo Platform 7.0.0
+# - MySQL 8.4.3 database
+# - Elasticsearch 8.14.3 for search
 # - ONLYOFFICE Document Server 8.2
 # - Nginx 1.26 reverse proxy
 #
