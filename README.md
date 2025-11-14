@@ -6,6 +6,7 @@ The eXo Platform Community edition Docker image support `HSQLDB` (for testing) a
 
 | Image                             | JDK | eXo Platform          |
 |-----------------------------------|-----|-----------------------|
+| exoplatform/exo-community:7.1     | 21  | 7.1 Community edition |
 | exoplatform/exo-community:7.0     | 21  | 7.0 Community edition |
 | exoplatform/exo-community:6.5     | 17  | 6.5 Community edition |
 | exoplatform/exo-community:6.4     | 17  | 6.4 Community edition |
