@@ -42,13 +42,9 @@ jobs:
         with:
           dockerImage: "exoplatform/exo-community"
           dockerImageTag: ${{ needs.parse-docker-build-env.outputs.image_tag }}
-          signImage: false
           cosignImage: true
           attestImage: true
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_PRIVATE_KEY_ID: ${{ secrets.DOCKER_PRIVATE_KEY_ID }}
-          DOCKER_PRIVATE_KEY: ${{ secrets.DOCKER_PRIVATE_KEY }}
-          DOCKER_PRIVATE_KEY_PASSPHRASE: ${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
