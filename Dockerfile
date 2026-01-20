@@ -43,16 +43,16 @@ ARG DOWNLOAD_USER
 # Default base directory on the plf archive
 ARG ARCHIVE_BASE_DIR=platform-community-${EXO_VERSION}
 
-ENV EXO_APP_DIR   /opt/exo
-ENV EXO_CONF_DIR  /etc/exo
-ENV EXO_CODEC_DIR /etc/exo/codec
-ENV EXO_DATA_DIR  /srv/exo
-ENV EXO_SHARED_DATA_DIR    /srv/exo/shared
-ENV EXO_LOG_DIR   /var/log/exo
-ENV EXO_TMP_DIR   /tmp/exo-tmp
+ENV EXO_APP_DIR=/opt/exo
+ENV EXO_CONF_DIR=/etc/exo
+ENV EXO_CODEC_DIR=/etc/exo/codec
+ENV EXO_DATA_DIR=/srv/exo
+ENV EXO_SHARED_DATA_DIR=/srv/exo/shared
+ENV EXO_LOG_DIR=/var/log/exo
+ENV EXO_TMP_DIR=/tmp/exo-tmp
 
-ENV EXO_USER exo
-ENV EXO_GROUP ${EXO_USER}
+ENV EXO_USER=exo
+ENV EXO_GROUP=${EXO_USER}
 
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
