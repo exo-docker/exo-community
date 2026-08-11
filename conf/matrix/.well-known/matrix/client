@@ -1,0 +1,8 @@
+{
+  "m.homeserver": {
+    "base_url": "http://exoapp.local"
+  },
+  "io.element.e2ee": {
+    "default": false
+  }
+}

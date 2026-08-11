@@ -1,0 +1,100 @@
+# Configuration file for Synapse.
+#
+# This file is a jinja2 template rendered at container startup by
+# conf/matrix/initialize.sh using environment variables. Placeholder
+# expressions like {{ MATRIX_JWT_SECRET }} are replaced by the values defined
+# in docker-compose.yml. No secrets are stored in this repository.
+
+server_name: {{ MATRIX_SERVER_NAME }}
+pid_file: /data/homeserver.pid
+
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    resources:
+      - names: [client]
+        compress: false
+
+enable_metrics: true
+
+public_baseurl: "{{ MATRIX_PUBLIC_BASEURL }}/"
+
+database:
+  name: psycopg2
+  args:
+    user: synapse
+    password: "{{ MATRIX_DB_PASSWORD }}"
+    database: synapse
+    host: postgres
+    cp_min: 5
+    cp_max: 10
+
+log_config: /data/matrix.log.config
+media_store_path: /data/media_store
+
+registration_shared_secret: "{{ MATRIX_REGISTRATION_SHARED_SECRET }}"
+report_stats: true
+macaroon_secret_key: "{{ MATRIX_MACAROON_SECRET }}"
+form_secret: "{{ MATRIX_FORM_SECRET }}"
+signing_key_path: "/data/matrix.signing.key"
+
+jwt_config:
+  enabled: true
+  secret: "{{ MATRIX_JWT_SECRET }}"
+  algorithm: "HS256"
+
+# Demo deployment runs without TLS, federation is disabled.
+federation:
+  enabled: false
+
+rc_registration:
+  per_second: 0.5
+  burst_count: 20
+
+rc_login:
+  address:
+    per_second: 20
+    burst_count: 100
+  account:
+    per_second: 1
+    burst_count: 10
+  failed_attempts:
+    per_second: 1
+    burst_count: 10
+
+enable_3pid_changes: true
+encryption_enabled_by_default_for_room_type: "off"
+enable_authenticated_media: false
+{% if ENABLE_PLUGIN_INSTALL == "true" %}
+modules:
+  - module: synapse_auto_accept_invite.InviteAutoAccepter
+    config:
+      accept_invites_only_for_direct_messages: true
+      accept_invites_only_from_local_users: true
+{% endif %}
+default_power_level_content_override:
+  private_chat:
+    events:
+      m.room.avatar: 50
+      m.room.canonical_alias: 50
+      m.room.encryption: 999
+      m.room.history_visibility: 100
+      m.room.name: 50
+      m.room.invite: 100
+      m.room.power_levels: 100
+      m.room.server_acl: 100
+      m.room.tombstone: 100
+    events_default: 0
+  public_chat:
+    events:
+      m.room.avatar: 50
+      m.room.canonical_alias: 50
+      m.room.encryption: 999
+      m.room.history_visibility: 100
+      m.room.name: 50
+      m.room.power_levels: 100
+      m.room.server_acl: 100
+      m.room.tombstone: 100
+    events_default: 0

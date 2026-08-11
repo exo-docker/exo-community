@@ -60,6 +60,50 @@ Follow the [quick start guide](https://docs.exoplatform.org/guide/getting-starte
 
 Follow the [advanced guide](https://docs.exoplatform.org/guide/getting-started/start-community.html#start-exo-platform)
 
+## Matrix chat
+
+The `docker-compose.yml` file also deploys a [Matrix](https://matrix.org) messaging server (Synapse) with a PostgreSQL database, used by the eXo chat feature. The stack runs a single Synapse node over plain HTTP (no TLS, no workers).
+
+The Synapse configuration is rendered at startup from `conf/matrix/homeserver.yaml` (a jinja2 template) using the following environment variables (default values, must be overridden beyond local testing):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MATRIX_SERVER_NAME` | `exoapp.local` | Synapse server name (should match `EXO_PROXY_VHOST`) |
+| `MATRIX_PUBLIC_BASEURL` | `http://exoapp.local` | Public base URL of the homeserver |
+| `MATRIX_ADMIN_USERNAME` | `root` | Admin account created on first startup |
+| `MATRIX_ADMIN_PASSWORD` | demo value (see docker-compose.yml) | Admin account password |
+| `MATRIX_DB_PASSWORD` | `matrix-secret-pw` | Synapse database user password |
+| `MATRIX_POSTGRES_PASSWORD` | `matrix-super-secret-pw` | PostgreSQL superuser password |
+| `MATRIX_REGISTRATION_SHARED_SECRET` | demo value (see docker-compose.yml) | Shared secret shared with eXo |
+| `MATRIX_MACAROON_SECRET` | demo value (see docker-compose.yml) | Synapse macaroon secret |
+| `MATRIX_FORM_SECRET` | demo value (see docker-compose.yml) | Synapse form secret |
+| `MATRIX_JWT_SECRET` | demo value (see docker-compose.yml) | JWT secret shared with eXo |
+
+These secrets are also injected into the eXo JVM via `JAVA_OPTS` (`-Dmeeds.matrix.*`), so they must stay consistent between the eXo and Matrix containers.
+
+### Generating the secrets
+
+Generate them from the deployment FQDN (replace `exoapp.local` with your `EXO_PROXY_VHOST`) with the following recipe: compute `sha256("<fqdn>-<salt>")`, base64-encode the raw digest, strip trailing `=`, map `/` to `A` and `+` to `B`, then keep the first N characters.
+
+```bash
+gen_secret() { local n="$1" salt="$2" fqdn="$3" seed="$fqdn-$salt" hash b64
+  hash=$(printf '%s' "$seed" | sha256sum | awk '{print $1}')
+  b64=$(printf '%s' "$hash" | xxd -r -p | base64 | tr -d '=' | tr '/+' 'AB')
+  printf '%s' "${b64:0:$n}"
+}
+
+FQDN=exoapp.local
+export MATRIX_ADMIN_PASSWORD="$(gen_secret 32 admin-password $FQDN)"
+export MATRIX_REGISTRATION_SHARED_SECRET="$(gen_secret 32 reg-secret $FQDN)"
+export MATRIX_MACAROON_SECRET="$(gen_secret 64 macaroon-secret $FQDN)"
+export MATRIX_FORM_SECRET="$(gen_secret 32 form-secret $FQDN)"
+export MATRIX_JWT_SECRET="$(gen_secret 32 jwt-secret $FQDN)"
+```
+
+Then `docker compose up -d`. Keep the `MATRIX_JWT_SECRET` at 32 characters: it is shared with eXo which signs its JWTs with the algorithm derived from the key length (`HS256` for a 32-byte key), matching the `HS256` configured on Synapse. A longer secret would make eXo sign with `HS512` and logins would fail with `JWT validation failed: unsupported_algorithm`.
+
+`conf/matrix/.well-known/` contains the Matrix delegation files served by Nginx (`/.well-known/matrix/client` and `/.well-known/matrix/server`). If you change `EXO_PROXY_VHOST`, update these files and the `server_name`/`base_url` accordingly.
+
 ## Configuration options
 
 Configuration options are available [here](https://github.com/exo-docker/exo-community/blob/master/configuration.md) 
