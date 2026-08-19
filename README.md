@@ -21,6 +21,8 @@ The eXo Platform Community edition Docker image support `HSQLDB` (for testing) a
 | exoplatform/exo-community:4.2     | 7   | 4.2 Community edition |
 | exoplatform/exo-community:4.1     | 7   | 4.1 Community edition |
 
+> **Multi-Architecture Support**: Starting from version `7.3.0`, eXo Platform Community Docker images are built for both `linux/amd64` and `linux/arm64` architectures. This allows running eXo Platform Community on Apple Silicon (M1/M2/M3), AWS Graviton, and other ARM64-based systems. Previous versions are amd64 only.
+
 The image is compatible with the following databases system :  `MySQL` (default) / `HSQLDB` / `PostgreSQL`
 
 - [Quick start](#quick-start)
