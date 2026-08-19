@@ -11,26 +11,14 @@
 #           docker run -d -p 8080:8080 -v $(pwd)/setenv-customize.sh:/opt/exo/bin/setenv-customize.sh:ro exoplatform/exo-community
 
 FROM  exoplatform/jdk:openjdk-21-ubuntu-2604
-LABEL   maintainer="eXo Platform <docker@exoplatform.com>"
 
-# Install the needed packages
-RUN apt-get -qq update && \
-  apt-get -qq -y upgrade ${_APT_OPTIONS} && \
-  apt-get -qq -y install ${_APT_OPTIONS} xmlstarlet jq && \
-  echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
-  echo "ttf-mscorefonts-installer msttcorefonts/present-mscorefonts-eula note" | debconf-set-selections && \
-  apt-get -qq -y install ${_APT_OPTIONS} ttf-mscorefonts-installer && \
-  apt-get -qq -y install ${_APT_OPTIONS} libreoffice-calc libreoffice-draw libreoffice-impress libreoffice-math libreoffice-writer && \
-  apt-get -qq -y autoremove && \
-  apt-get -qq -y clean && \
-  rm -rf /var/lib/apt/lists/*
-# Check if the released binary was modified and make the build fail if it is the case
-RUN wget -nv -q -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/1.15.0/yq_linux_amd64 && \
-  echo "35d8b1123849350daa5ff11dd23c81b8 /usr/bin/yq" | md5sum -c - \
-  || { \
-  echo "ERROR: the [/usr/bin/yq] binary downloaded from a github release was modified while is should not !!"; \
-  return 1; \
-  } && chmod a+x /usr/bin/yq
+LABEL org.opencontainers.image.authors="eXo Platform <docker@exoplatform.com>" \
+      org.opencontainers.image.title="eXo Platform Community" \
+      org.opencontainers.image.description="Docker image for eXo Platform Community Edition" \
+      org.opencontainers.image.vendor="eXo Platform" \
+      org.opencontainers.image.source="https://github.com/exo-docker/exo-community"
+
+ARG YQ_VERSION=v4.53.4
 
 # Build Arguments and environment variables
 ARG EXO_VERSION=7.1.0
@@ -43,30 +31,74 @@ ARG DOWNLOAD_USER
 # Default base directory on the plf archive
 ARG ARCHIVE_BASE_DIR=platform-community-${EXO_VERSION}
 
-ENV EXO_APP_DIR=/opt/exo
-ENV EXO_CONF_DIR=/etc/exo
-ENV EXO_CODEC_DIR=/etc/exo/codec
-ENV EXO_DATA_DIR=/srv/exo
-ENV EXO_SHARED_DATA_DIR=/srv/exo/shared
-ENV EXO_LOG_DIR=/var/log/exo
-ENV EXO_TMP_DIR=/tmp/exo-tmp
-
-ENV EXO_USER=exo
-ENV EXO_GROUP=${EXO_USER}
-
+ENV EXO_APP_DIR=/opt/exo \
+    EXO_CONF_DIR=/etc/exo \
+    EXO_CODEC_DIR=/etc/exo/codec \
+    EXO_DATA_DIR=/srv/exo \
+    EXO_SHARED_DATA_DIR=/srv/exo/shared \
+    EXO_LOG_DIR=/var/log/exo \
+    EXO_TMP_DIR=/tmp/exo-tmp \
+    EXO_USER=exo \
+    EXO_GROUP=exo \
+    DEBIAN_FRONTEND=noninteractive
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-# giving all rights to eXo user
-RUN useradd --create-home -u 999 --user-group --shell /bin/bash ${EXO_USER}
+RUN useradd --create-home -u 999 --user-group --shell /bin/bash --no-log-init ${EXO_USER}
+
+# Install the needed packages
+RUN apt-get -qq update && \
+  apt-get -qq -y upgrade ${_APT_OPTIONS} && \
+  apt-get -qq -y install --no-install-recommends ${_APT_OPTIONS} debconf-utils && \
+  echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
+  echo "ttf-mscorefonts-installer msttcorefonts/present-mscorefonts-eula note" | debconf-set-selections && \
+  apt-get -qq -y install ${_APT_OPTIONS} \
+    xmlstarlet \
+    jq \
+    curl \
+    unzip \
+    ca-certificates \
+    fontconfig \
+    ttf-mscorefonts-installer \
+    libreoffice-calc \
+    libreoffice-draw \
+    libreoffice-impress \
+    libreoffice-math \
+    libreoffice-writer && \
+  apt-get -qq -y autoremove && \
+  apt-get -qq -y clean && \
+  rm -rf /var/lib/apt/lists/*
+
+# Download yq with architecture detection and checksum verification
+RUN YQ_ARCH=$(dpkg --print-architecture) && \
+    if [ "$YQ_ARCH" = "amd64" ]; then \
+        YQ_SHA256="f67d8a6a2dc2308c961f83d5ba8707fd4c7c44ad77902fef87eb3a4646cdfa2a"; \
+    elif [ "$YQ_ARCH" = "arm64" ]; then \
+        YQ_SHA256="8c3cf4cff01536588947b6e0ba1544768039e34054cd9ca8a9e4c5706dfb8631"; \
+    else \
+        echo "Unsupported architecture: $YQ_ARCH"; exit 1; \
+    fi && \
+    curl -fsSL -o /usr/bin/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${YQ_ARCH}" && \
+    echo "${YQ_SHA256} /usr/bin/yq" | sha256sum -c - \
+    || { \
+    echo "ERROR: the [/usr/bin/yq] binary downloaded from a github release was modified while it should not !!"; \
+    exit 1; \
+    } && \
+    chmod a+x /usr/bin/yq
+
+# Drop pebble as we use tini
+RUN rm -f /usr/bin/pebble \
+    && rm -rf /var/lib/pebble \
+    && rm -rf /etc/pebble
 
 # Create needed directories
-RUN mkdir -p ${EXO_DATA_DIR}   && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR} \
-    && mkdir -p ${EXO_SHARED_DATA_DIR}  && chown ${EXO_USER}:${EXO_GROUP} ${EXO_SHARED_DATA_DIR}  \
-    && mkdir -p ${EXO_TMP_DIR} && chown ${EXO_USER}:${EXO_GROUP} ${EXO_TMP_DIR} \
-    && mkdir -p ${EXO_LOG_DIR} && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
+RUN mkdir -p ${EXO_DATA_DIR}          && chown ${EXO_USER}:${EXO_GROUP} ${EXO_DATA_DIR} \
+    && mkdir -p ${EXO_SHARED_DATA_DIR} && chown ${EXO_USER}:${EXO_GROUP} ${EXO_SHARED_DATA_DIR} \
+    && mkdir -p ${EXO_TMP_DIR}        && chown ${EXO_USER}:${EXO_GROUP} ${EXO_TMP_DIR} \
+    && mkdir -p ${EXO_LOG_DIR}        && chown ${EXO_USER}:${EXO_GROUP} ${EXO_LOG_DIR}
 
 # Install eXo Platform
-RUN if [ -n "${DOWNLOAD_USER}" ]; then PARAMS="-u ${DOWNLOAD_USER}"; fi && \
+RUN set -e; \
+  if [ -n "${DOWNLOAD_USER}" ]; then PARAMS="-u ${DOWNLOAD_USER}"; fi && \
   if [ ! -n "${DOWNLOAD_URL}" ]; then \
   echo "Building an image with eXo Platform version : ${EXO_VERSION}"; \
   EXO_VERSION_SHORT=$(echo ${EXO_VERSION} | awk -F "\." '{ print $1"."$2}'); \
@@ -82,9 +114,8 @@ RUN if [ -n "${DOWNLOAD_USER}" ]; then PARAMS="-u ${DOWNLOAD_USER}"; fi && \
   rm -rf ${EXO_APP_DIR}/logs && ln -s ${EXO_LOG_DIR} ${EXO_APP_DIR}/logs
 
 # Install Docker customization file
-ADD scripts/setenv-docker-customize.sh ${EXO_APP_DIR}/bin/setenv-docker-customize.sh
+COPY --chown=${EXO_USER}:${EXO_GROUP} scripts/setenv-docker-customize.sh ${EXO_APP_DIR}/bin/setenv-docker-customize.sh
 RUN chmod 755 ${EXO_APP_DIR}/bin/setenv-docker-customize.sh && \
-  chown ${EXO_USER}:${EXO_GROUP} ${EXO_APP_DIR}/bin/setenv-docker-customize.sh && \
   sed -i '/# Load custom settings/i \
   \# Load custom settings for docker environment\n\
   [ -r "$CATALINA_BASE/bin/setenv-docker-customize.sh" ] \
